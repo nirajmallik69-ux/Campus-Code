@@ -1,0 +1,22 @@
+{
+  "name": "campus-code-frontend",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Campus Code — Silicon University's competitive coding leaderboard.",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "lucide-react": "^0.445.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-router-dom": "^7.18.3"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.3.1",
+    "vite": "^8.2.2"
+  }
+}
