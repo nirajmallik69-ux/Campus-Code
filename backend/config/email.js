@@ -13,7 +13,7 @@ const axios = require("axios");
 //   3. Settings > SMTP & API > API Keys > generate a key, put it in
 //      BREVO_API_KEY.
 
-const BREVO_API_URL = "https://api.brevo.com/v3/smtp/email";
+const BREVO_API_URL = "smtp-relay.brevo.com";
 
 // Parses `"Campus Code" <user@example.com>` into { name, email },
 // the shape Brevo's API expects for the sender field.
