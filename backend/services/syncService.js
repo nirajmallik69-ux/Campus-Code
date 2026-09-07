@@ -8,7 +8,7 @@ const {
 // Same window used by the student-facing /api/leetcode/stats route,
 // kept here too so admin-triggered syncs don't hammer the API for
 // students who were already refreshed recently.
-const CACHE_DURATION = 6 * 60 * 60 * 1000;
+const CACHE_DURATION = 2 * 60 * 60 * 1000;
 
 // How many students we sync at once, and how long we pause between
 // batches. Kept small and simple on purpose - a full job queue would
@@ -21,7 +21,7 @@ const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 /*
     Sync one student's LeetCode stats.
 
-    Pass `force: true` to ignore the 6-hour cache (used when an
+    Pass `force: true` to ignore the 2-hour cache (used when an
     admin explicitly re-syncs a single student).
 
     Returns a small result object instead of throwing, so batch
