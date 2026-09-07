@@ -3,6 +3,7 @@ require("dotenv").config();
 const express = require("express");
 const helmet = require("helmet");
 const cors = require("cors");
+const rateLimit = require("express-rate-limit");
 
 const connectDB = require("./config/db");
 const authRoutes = require("./routes/authRoutes");
@@ -16,9 +17,26 @@ const app = express();
 
 const PORT = process.env.PORT || 5000;
 
+// Render/Railway/Vercel/Heroku/etc. all put the app behind a reverse
+// proxy. Without this, every request looks like it comes from the
+// proxy's IP, which breaks express-rate-limit's per-IP counting (it
+// would rate-limit "everyone" as a single caller).
+app.set("trust proxy", 1);
+
 // Middleware
 app.use(express.json());
 app.use(helmet());
+
+// A generous, sitewide baseline limiter. The stricter, purpose-built
+// OTP limiter in routes/authRoutes.js still applies on top of this
+// for the /send-otp endpoint specifically.
+const globalLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    limit: 300,
+    standardHeaders: true,
+    legacyHeaders: false
+});
+app.use(globalLimiter);
 
 const allowedOrigins = [
     "http://localhost:3000",
@@ -26,7 +44,6 @@ const allowedOrigins = [
     "http://localhost:5500",
     "http://127.0.0.1:5500",
     "http://localhost:5173",
-    "https://campus-code.netlify.app/",
 ];
 
 // Allow the production frontend URL to be configured via env var.
@@ -60,13 +77,16 @@ app.get("/", (req, res) => {
     res.send("Campus Code api is running.");
 });
 
-// Connect to MongoDB
-connectDB();
-
 // Error handling middleware
 app.use(errorHandler);
 
-// Port
-app.listen(PORT, () => {
-    console.log(`Server Is Running on PORT ${PORT}`);
-});
+// Connect to MongoDB, then start accepting traffic - avoids serving
+// requests before the database connection is actually ready.
+const startServer = async () => {
+    await connectDB();
+    app.listen(PORT, () => {
+        console.log(`Server Is Running on PORT ${PORT}`);
+    });
+};
+
+startServer();
