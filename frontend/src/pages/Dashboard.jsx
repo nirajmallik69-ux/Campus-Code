@@ -145,7 +145,7 @@ export default function Dashboard() {
             {syncing ? "Syncing..." : "Sync LeetCode"}
           </Button>
           <p className="field-hint">
-            Stats refresh at most once every 6 hours to stay within LeetCode's rate limits.
+            Stats refresh at most once every 2 hours to stay within LeetCode's rate limits.
           </p>
         </div>
       </div>

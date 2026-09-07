@@ -7,11 +7,11 @@ import Avatar from "../components/Avatar";
 // they need to change.
 // ------------------------------------------------------------
 const DEVELOPER = {
-  name: "Niraj Mallik",
+  name: "Your Name",
   role: "Full-stack Developer",
-  bio: "Built Campus Code end-to-end and logic in between.",
+  bio: "Built Campus Code end-to-end — backend, frontend, and the leaderboard logic in between.",
   photo: null, // e.g. "/developer.jpg" — falls back to initials if left null
-  linkedin: "https://www.linkedin.com/in/nirajmallik/",
+  linkedin: "https://linkedin.com/in/your-username",
   github: "", // optional — leave blank to hide
   website: "" // optional — leave blank to hide
 };
@@ -45,7 +45,7 @@ export default function About() {
           <div>
             <strong>Synced, not scraped live</strong>
             <p className="text-secondary" style={{ fontSize: 14, marginTop: 4 }}>
-              Stats refresh from LeetCode at most once every 6 hours, so the leaderboard stays
+              Stats refresh from LeetCode at most once every 2 hours, so the leaderboard stays
               accurate without hammering LeetCode's servers.
             </p>
           </div>
