@@ -14,7 +14,7 @@ services:
         sync: false
       - key: EMAIL_USER
         sync: false
-      - key: EMAIL_PASS
+      - key: BREVO_API_KEY
         sync: false
       - key: CLOUDINARY_CLOUD_NAME
         sync: false
