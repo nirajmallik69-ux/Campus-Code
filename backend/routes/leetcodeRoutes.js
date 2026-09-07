@@ -13,8 +13,8 @@ const {
 
 const asyncHandler = require("../middleware/asyncHandler");
 
-// LeetCode stats are refreshed at most once every 6 hours
-const CACHE_DURATION = 6 * 60 * 60 * 1000;
+// LeetCode stats are refreshed at most once every 2 hours
+const CACHE_DURATION = 2 * 60 * 60 * 1000;
 
 router.get(
     "/stats",
