@@ -6,7 +6,7 @@ const nodemailer = require("nodemailer");
 // port 465, and forcing IPv4 avoids a separate class of ETIMEDOUT
 // caused by unreliable outbound IPv6 routing to Gmail's servers.
 const transporter = nodemailer.createTransport({
-    host: "smtp.gmail.com",
+    host: "smtp-relay.brevo.com",
     port: 587,
     secure: false, // STARTTLS upgrades the connection after connecting
     requireTLS: true,
