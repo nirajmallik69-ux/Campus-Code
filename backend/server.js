@@ -12,6 +12,7 @@ const errorHandler = require("./middleware/errorHandler");
 const leaderboardRoutes = require("./routes/leaderboardRoutes");
 const studentRoutes = require("./routes/studentRoutes");
 const adminRoutes = require("./routes/adminRoutes");
+const startAutoSyncSchedule = require("./services/scheduler");
 
 const app = express();
 
@@ -87,6 +88,7 @@ const startServer = async () => {
     app.listen(PORT, () => {
         console.log(`Server Is Running on PORT ${PORT}`);
     });
+    startAutoSyncSchedule();
 };
 
 startServer();

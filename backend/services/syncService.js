@@ -141,5 +141,6 @@ const syncAllStudents = async ({ force = false } = {}) => {
 
 module.exports = {
     syncStudentStats,
-    syncAllStudents
+    syncAllStudents,
+    CACHE_DURATION
 };

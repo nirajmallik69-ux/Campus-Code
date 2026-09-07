@@ -11,10 +11,9 @@ const {
     getLeetCodeProfile
 } = require("../services/leetcodeService");
 
-const asyncHandler = require("../middleware/asyncHandler");
+const { CACHE_DURATION } = require("../services/syncService");
 
-// LeetCode stats are refreshed at most once every 2 hours
-const CACHE_DURATION = 2 * 60 * 60 * 1000;
+const asyncHandler = require("../middleware/asyncHandler");
 
 router.get(
     "/stats",
