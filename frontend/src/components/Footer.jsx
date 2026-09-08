@@ -8,7 +8,7 @@ export default function Footer() {
           <span className="brand" style={{ fontSize: 16 }}>
             CAMPUS CODE
           </span>
-          <span className="footer-tagline">Powered by NIRAZZ</span>
+          <span className="footer-tagline">Powered by Switch</span>
         </div>
         <nav className="footer-links">
           <Link to="/">Leaderboard</Link>

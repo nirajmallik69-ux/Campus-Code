@@ -69,13 +69,11 @@ const updateProfileSchema = z.object({
         .string()
         .trim()
         .min(10, "Invalid WhatsApp number")
-        .optional(),
-
-    leetcodeUsername: z
-        .string()
-        .trim()
-        .min(1, "LeetCode username is required")
         .optional()
+
+    // leetcodeUsername intentionally NOT included here - it is
+    // locked once set. Only an admin can change it, via
+    // PATCH /api/admin/students/:id.
 });
 
 module.exports = {

@@ -4,6 +4,8 @@ const router = express.Router();
 
 const User = require("../models/User");
 const LeetCodeStats = require("../models/LeetCodeStats");
+const RefreshToken = require("../models/RefreshToken");
+const cloudinary = require("../config/cloudinary");
 
 // A malformed :id (wrong length/characters) would otherwise reach
 // Mongoose and throw a CastError, which the generic error handler
@@ -22,7 +24,10 @@ const authenticateToken = require("../middleware/authMiddleware");
 const requireAdmin = require("../middleware/requireAdmin");
 const asyncHandler = require("../middleware/asyncHandler");
 
-const { listStudentsQuerySchema } = require("../validation/adminValidation");
+const {
+    listStudentsQuerySchema,
+    adminUpdateStudentSchema
+} = require("../validation/adminValidation");
 
 const {
     syncStudentStats,
@@ -171,6 +176,126 @@ router.get(
         }).select("-__v");
 
         return res.json({ user, stats });
+    })
+);
+
+
+// ======================================================
+// PATCH /api/admin/students/:id
+// Admin-only profile edit - including LeetCode username,
+// which students can no longer change themselves.
+// ======================================================
+router.patch(
+    "/students/:id",
+    requireValidObjectId,
+    asyncHandler(async (req, res) => {
+
+        const result = adminUpdateStudentSchema.safeParse(req.body);
+
+        if (!result.success) {
+            return res.status(400).json({
+                message: result.error.issues[0].message
+            });
+        }
+
+        const { name, year, whatsappNumber, leetcodeUsername } = result.data;
+
+        const user = await User.findById(req.params.id);
+
+        if (!user) {
+            return res.status(404).json({
+                message: "Student not found."
+            });
+        }
+
+        if (leetcodeUsername && leetcodeUsername !== user.leetcodeUsername) {
+
+            const existingLeetcode = await User.findOne({
+                leetcodeUsername,
+                _id: { $ne: user._id }
+            });
+
+            if (existingLeetcode) {
+                return res.status(409).json({
+                    message: "LeetCode username is already registered."
+                });
+            }
+
+            user.leetcodeUsername = leetcodeUsername;
+
+            // Same reasoning as the old self-service flow: cached
+            // stats belong to the OLD username, so wipe them and
+            // point at the new one rather than showing stale numbers
+            // under a different name.
+            await LeetCodeStats.findOneAndUpdate(
+                { userId: user._id },
+                {
+                    leetcodeUsername,
+                    totalSolved: 0,
+                    easySolved: 0,
+                    mediumSolved: 0,
+                    hardSolved: 0,
+                    leetcodePoints: 0,
+                    contestRating: 0,
+                    leetcodeRank: null,
+                    lastUpdated: null
+                },
+                { upsert: true }
+            );
+        }
+
+        if (name !== undefined) user.name = name;
+        if (year !== undefined) user.year = year;
+        if (whatsappNumber !== undefined) user.whatsappNumber = whatsappNumber;
+
+        await user.save();
+
+        return res.json({
+            message: "Student updated successfully.",
+            user
+        });
+    })
+);
+
+
+// ======================================================
+// DELETE /api/admin/students/:id
+// Permanently removes a student account: the user document,
+// their cached LeetCode stats, their active sessions, and
+// their Cloudinary profile picture.
+// ======================================================
+router.delete(
+    "/students/:id",
+    requireValidObjectId,
+    asyncHandler(async (req, res) => {
+
+        if (req.params.id === String(req.user.userId)) {
+            return res.status(400).json({
+                message: "You cannot delete your own account from the admin panel."
+            });
+        }
+
+        const user = await User.findById(req.params.id);
+
+        if (!user) {
+            return res.status(404).json({
+                message: "Student not found."
+            });
+        }
+
+        if (user.profilePicturePublicId) {
+            await cloudinary.uploader.destroy(user.profilePicturePublicId);
+        }
+
+        await Promise.all([
+            LeetCodeStats.deleteOne({ userId: user._id }),
+            RefreshToken.deleteMany({ userId: user._id }),
+            User.deleteOne({ _id: user._id })
+        ]);
+
+        return res.json({
+            message: "Student account deleted successfully."
+        });
     })
 );
 

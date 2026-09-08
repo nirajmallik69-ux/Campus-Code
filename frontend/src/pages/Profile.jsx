@@ -9,6 +9,9 @@ import LockedField from "../components/LockedField";
 import Button from "../components/Button";
 import { friendlyErrorMessage, validateProfilePicture } from "../lib/utils";
 
+const CONTACT_ADMIN_MESSAGE =
+  "This can't be changed here. Please contact an admin via the About page to make this change.";
+
 export default function Profile() {
   const { user, updateProfile, refreshUser } = useAuth();
   const toast = useToast();
@@ -17,8 +20,7 @@ export default function Profile() {
   const [form, setForm] = useState({
     name: user?.name || "",
     year: user?.year ? String(user.year) : "",
-    whatsappNumber: user?.whatsappNumber || "",
-    leetcodeUsername: user?.leetcodeUsername || ""
+    whatsappNumber: user?.whatsappNumber || ""
   });
   const [errors, setErrors] = useState({});
   const [saving, setSaving] = useState(false);
@@ -30,15 +32,13 @@ export default function Profile() {
   const dirty =
     form.name !== (user?.name || "") ||
     form.year !== (user?.year ? String(user.year) : "") ||
-    form.whatsappNumber !== (user?.whatsappNumber || "") ||
-    form.leetcodeUsername !== (user?.leetcodeUsername || "");
+    form.whatsappNumber !== (user?.whatsappNumber || "");
 
   const validate = () => {
     const next = {};
     if (form.name.trim().length < 2) next.name = "Name must be at least 2 characters long.";
     if (!["1", "2", "3", "4"].includes(String(form.year))) next.year = "Choose your year.";
     if (form.whatsappNumber.trim().length < 10) next.whatsappNumber = "Enter a valid WhatsApp number.";
-    if (!form.leetcodeUsername.trim()) next.leetcodeUsername = "LeetCode username is required.";
     setErrors(next);
     return Object.keys(next).length === 0;
   };
@@ -52,8 +52,7 @@ export default function Profile() {
       await updateProfile({
         name: form.name.trim(),
         year: Number(form.year),
-        whatsappNumber: form.whatsappNumber.trim(),
-        leetcodeUsername: form.leetcodeUsername.trim()
+        whatsappNumber: form.whatsappNumber.trim()
       });
       toast.success("Profile updated");
     } catch (err) {
@@ -92,6 +91,8 @@ export default function Profile() {
       setPreviewUrl(null);
     }
   };
+
+  const handleLockedFieldClick = () => toast.info(CONTACT_ADMIN_MESSAGE);
 
   return (
     <div className="page container" style={{ maxWidth: 720, margin: "0 auto" }}>
@@ -132,10 +133,17 @@ export default function Profile() {
         <form onSubmit={handleSave}>
           <div className="profile-fields">
             <div className="field full">
-              <LockedField label="Email" value={user?.email} />
+              <LockedField label="Email" value={user?.email} onClick={handleLockedFieldClick} />
             </div>
             <div className="field full">
-              <LockedField label="SIC ID" value={user?.sicId} />
+              <LockedField label="SIC ID" value={user?.sicId} onClick={handleLockedFieldClick} />
+            </div>
+            <div className="field full">
+              <LockedField
+                label="LeetCode username"
+                value={user?.leetcodeUsername}
+                onClick={handleLockedFieldClick}
+              />
             </div>
 
             <Input label="Full name" value={form.name} onChange={update("name")} error={errors.name} />
@@ -156,14 +164,6 @@ export default function Profile() {
               value={form.whatsappNumber}
               onChange={update("whatsappNumber")}
               error={errors.whatsappNumber}
-            />
-
-            <Input
-              label="LeetCode username"
-              value={form.leetcodeUsername}
-              onChange={update("leetcodeUsername")}
-              error={errors.leetcodeUsername}
-              hint="Changing this resets your cached stats until the next sync."
             />
           </div>
 

@@ -355,6 +355,17 @@ img {
   border-radius: var(--radius-sm);
   padding: 13px 14px;
   color: var(--text-secondary);
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.locked-field-clickable {
+  cursor: pointer;
+}
+
+.locked-field-clickable:hover,
+.locked-field-clickable:focus-visible {
+  border-color: var(--accent);
+  background: var(--surface-2);
 }
 
 .locked-badge {

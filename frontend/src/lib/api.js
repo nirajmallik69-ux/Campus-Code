@@ -223,6 +223,11 @@ export const adminApi = {
 
   studentDetail: (id) => request(`/admin/students/${id}`),
 
+  updateStudent: (id, payload) =>
+    request(`/admin/students/${id}`, { method: "PATCH", body: payload }),
+
+  deleteStudent: (id) => request(`/admin/students/${id}`, { method: "DELETE" }),
+
   syncStudent: (id) => request(`/admin/sync/student/${id}`, { method: "POST" }),
 
   syncAll: (force = false) =>

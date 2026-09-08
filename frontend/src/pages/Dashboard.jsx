@@ -1,19 +1,15 @@
 import { useCallback, useEffect, useState } from "react";
 import { Trophy, Users, Zap, ListChecks, RefreshCw, Globe2 } from "lucide-react";
-import { studentApi, leetcodeApi } from "../lib/api";
-import { useToast } from "../context/ToastContext";
+import { studentApi } from "../lib/api";
 import StatCard from "../components/StatCard";
-import Button from "../components/Button";
 import { StatCardSkeleton, SkeletonBlock } from "../components/LoadingSkeleton";
 import { ErrorState } from "../components/EmptyState";
 import { formatNumber, formatOrdinalRank, formatRelativeTime, friendlyErrorMessage } from "../lib/utils";
 
 export default function Dashboard() {
-  const toast = useToast();
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [syncing, setSyncing] = useState(false);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -31,22 +27,6 @@ export default function Dashboard() {
   useEffect(() => {
     load();
   }, [load]);
-
-  const handleSync = async () => {
-    setSyncing(true);
-    try {
-      const result = await leetcodeApi.getStats();
-      const wasCached = /cache/i.test(result?.message || "");
-      toast[wasCached ? "info" : "success"](
-        wasCached ? "Your stats are already up to date." : "LeetCode synced successfully"
-      );
-      await load();
-    } catch (err) {
-      toast.error(friendlyErrorMessage(err, "Unable to sync LeetCode right now."));
-    } finally {
-      setSyncing(false);
-    }
-  };
 
   if (loading) {
     return (
@@ -138,14 +118,12 @@ export default function Dashboard() {
         <div className="card sync-panel">
           <RefreshCw size={28} color="var(--accent)" />
           <div>
-            <h2 style={{ fontSize: 17, marginBottom: 4 }}>Sync LeetCode</h2>
+            <h2 style={{ fontSize: 17, marginBottom: 4 }}>Auto-Sync</h2>
             <p className="sync-last">Last synced {formatRelativeTime(leetcode?.lastUpdated)}</p>
           </div>
-          <Button variant="primary" className="btn-block" loading={syncing} onClick={handleSync}>
-            {syncing ? "Syncing..." : "Sync LeetCode"}
-          </Button>
           <p className="field-hint">
-            Stats refresh at most once every 2 hours to stay within LeetCode's rate limits.
+            Your stats sync automatically every 2 hours — nothing to click. Just
+            keep solving and check back after your next sync window.
           </p>
         </div>
       </div>

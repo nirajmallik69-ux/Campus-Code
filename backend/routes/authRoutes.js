@@ -549,6 +549,16 @@ router.patch(
     authenticateToken,
     asyncHandler(async (req, res) => {
 
+        // Checked before schema validation so the message is specific
+        // to this field, rather than a generic "unrecognized key"
+        // (the schema no longer defines leetcodeUsername at all).
+        if (req.body?.leetcodeUsername !== undefined) {
+            return res.status(403).json({
+                message:
+                    "Your LeetCode username is locked. Please contact an admin via the About page to change it."
+            });
+        }
+
         const result = updateProfileSchema.safeParse(req.body);
 
         if (!result.success) {
@@ -560,8 +570,7 @@ router.patch(
         const {
             name,
             year,
-            whatsappNumber,
-            leetcodeUsername
+            whatsappNumber
         } = result.data;
 
         const user = await User.findOne({
@@ -572,47 +581,6 @@ router.patch(
             return res.status(404).json({
                 message: "User not found."
             });
-        }
-
-        // Check LeetCode username if it is being changed
-        if (
-            leetcodeUsername &&
-            leetcodeUsername !== user.leetcodeUsername
-        ) {
-            const existingLeetcode =
-                await User.findOne({
-                    leetcodeUsername,
-                    _id: { $ne: user._id }
-                });
-
-            if (existingLeetcode) {
-                return res.status(409).json({
-                    message:
-                        "LeetCode username is already registered."
-                });
-            }
-
-            user.leetcodeUsername = leetcodeUsername;
-
-            // The cached stats belong to the OLD username.
-            // Point LeetCodeStats at the new username and wipe
-            // the cache so the next sync fetches fresh data
-            // instead of showing stale numbers under a new name.
-            await LeetCodeStats.findOneAndUpdate(
-                { userId: user._id },
-                {
-                    leetcodeUsername,
-                    totalSolved: 0,
-                    easySolved: 0,
-                    mediumSolved: 0,
-                    hardSolved: 0,
-                    leetcodePoints: 0,
-                    contestRating: 0,
-                    leetcodeRank: null,
-                    lastUpdated: null
-                },
-                { upsert: true }
-            );
         }
 
         if (name !== undefined) {
