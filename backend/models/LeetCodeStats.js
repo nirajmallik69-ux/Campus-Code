@@ -61,7 +61,8 @@ const leetCodeStatsSchema = new mongoose.Schema(
 
         lastUpdated: {
             type: Date,
-            default: null
+            default: null,
+            index: true
         }
     }
 );
