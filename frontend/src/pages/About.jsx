@@ -12,7 +12,7 @@ const DEVELOPER = {
   bio: "Built Campus Code end-to-end — and the logic in between.",
   photo: null, // e.g. "/developer.jpg" — falls back to initials if left null
   linkedin: "https://linkedin.com/in/nirajmallik",
-  github: "", // optional — leave blank to hide
+  whatsapp: "https://bit.ly/4qZ2Qq9", // optional — leave blank to hide
   website: "" // optional — leave blank to hide
 };
 
