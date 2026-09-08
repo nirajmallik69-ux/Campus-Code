@@ -13,7 +13,7 @@ const DEVELOPER = {
   photo: null, // e.g. "/developer.jpg" — falls back to initials if left null
   linkedin: "https://linkedin.com/in/nirajmallik",
   whatsapp: "https://bit.ly/4qZ2Qq9", // optional — leave blank to hide
-  website: "" // optional — leave blank to hide
+  website: "https://bit.ly/4qZ2Qq9" // optional — leave blank to hide
 };
 
 export default function About() {
