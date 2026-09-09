@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import Avatar from "./Avatar";
+import AnimatedNumber from "./AnimatedNumber";
 import { formatNumber } from "../lib/utils";
 
 function RankBadge({ rank }) {
@@ -9,7 +10,7 @@ function RankBadge({ rank }) {
   return <span className="rank-pill">{rank}</span>;
 }
 
-export default function LeaderboardRow({ student }) {
+export default function LeaderboardRow({ student, index = 0 }) {
   const navigate = useNavigate();
   const go = () => navigate(`/student/${student.sicId}`);
 
@@ -19,6 +20,7 @@ export default function LeaderboardRow({ student }) {
       tabIndex={0}
       onKeyDown={(e) => e.key === "Enter" && go()}
       aria-label={`View ${student.name}'s public profile`}
+      style={{ "--i": index }}
     >
       <td className="rank-cell">
         <RankBadge rank={student.rank} />
@@ -36,12 +38,14 @@ export default function LeaderboardRow({ student }) {
       <td>{formatNumber(student.easySolved)}</td>
       <td>{formatNumber(student.mediumSolved)}</td>
       <td>{formatNumber(student.hardSolved)}</td>
-      <td className="points-cell">{formatNumber(student.leetcodePoints)}</td>
+      <td className="points-cell">
+        <AnimatedNumber value={student.leetcodePoints} />
+      </td>
     </tr>
   );
 }
 
-export function StudentCardRow({ student }) {
+export function StudentCardRow({ student, index = 0 }) {
   const navigate = useNavigate();
   const go = () => navigate(`/student/${student.sicId}`);
 
@@ -52,6 +56,7 @@ export function StudentCardRow({ student }) {
       tabIndex={0}
       onClick={go}
       onKeyDown={(e) => e.key === "Enter" && go()}
+      style={{ "--i": index }}
     >
       <span className={`rank-pill ${student.rank <= 3 ? `top-${student.rank}` : ""}`}>
         {student.rank}
@@ -65,7 +70,9 @@ export function StudentCardRow({ student }) {
         </div>
       </div>
       <div className="student-card-points">
-        <span className="points-cell">{formatNumber(student.leetcodePoints)}</span>
+        <span className="points-cell">
+          <AnimatedNumber value={student.leetcodePoints} />
+        </span>
         <span className="solved-label">{formatNumber(student.totalSolved)} solved</span>
       </div>
     </div>

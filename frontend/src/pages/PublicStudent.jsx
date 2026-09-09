@@ -4,6 +4,7 @@ import { Trophy, Users, Globe2, ExternalLink, ListChecks } from "lucide-react";
 import { studentApi } from "../lib/api";
 import Avatar from "../components/Avatar";
 import StatCard from "../components/StatCard";
+import Reveal from "../components/Reveal";
 import { ProfileCardSkeleton } from "../components/LoadingSkeleton";
 import { ErrorState } from "../components/EmptyState";
 import Button from "../components/Button";
@@ -64,40 +65,44 @@ export default function PublicStudent() {
 
   return (
     <div className="page container" style={{ maxWidth: 760, margin: "0 auto" }}>
-      <div className="card public-profile-hero">
-        <Avatar src={profilePicture} name={name} />
-        <h1>{name}</h1>
-        <p className="sic-tag">
-          {sicId} · Year {year}
-        </p>
+      <Reveal>
+        <div className="card public-profile-hero">
+          <Avatar src={profilePicture} name={name} />
+          <h1>{name}</h1>
+          <p className="sic-tag">
+            {sicId} · Year {year}
+          </p>
 
-        <div className="rank-badges">
-          <span className="badge badge-gold">
-            <Trophy size={13} /> Campus {formatOrdinalRank(ranking?.campusRank)}
-          </span>
-          <span className="badge badge-accent">
-            <Users size={13} /> Year {formatOrdinalRank(ranking?.yearRank)}
-          </span>
-          {ranking?.leetcodeRank != null && (
-            <span className="badge">
-              <Globe2 size={13} /> Global #{formatNumber(ranking.leetcodeRank)}
+          <div className="rank-badges">
+            <span className="badge badge-gold">
+              <Trophy size={13} /> Campus {formatOrdinalRank(ranking?.campusRank)}
             </span>
+            <span className="badge badge-accent">
+              <Users size={13} /> Year {formatOrdinalRank(ranking?.yearRank)}
+            </span>
+            {ranking?.leetcodeRank != null && (
+              <span className="badge">
+                <Globe2 size={13} /> Global #{formatNumber(ranking.leetcodeRank)}
+              </span>
+            )}
+          </div>
+
+          {profileUrl && (
+            <Button as="a" href={profileUrl} target="_blank" rel="noreferrer" variant="secondary" size="sm" style={{ marginTop: 20 }}>
+              View LeetCode Profile <ExternalLink size={14} />
+            </Button>
           )}
         </div>
+      </Reveal>
 
-        {profileUrl && (
-          <Button as="a" href={profileUrl} target="_blank" rel="noreferrer" variant="secondary" size="sm" style={{ marginTop: 20 }}>
-            View LeetCode Profile <ExternalLink size={14} />
-          </Button>
-        )}
-      </div>
-
-      <div className="public-stats-grid">
-        <StatCard icon={ListChecks} label="Total Solved" value={formatNumber(leetcode?.totalSolved)} accent="var(--accent)" />
-        <StatCard icon={Trophy} label="Points" value={formatNumber(leetcode?.points)} accent="var(--gold)" />
-        <StatCard icon={ListChecks} label="Easy" value={formatNumber(leetcode?.easySolved)} accent="var(--success)" />
-        <StatCard icon={ListChecks} label="Medium" value={formatNumber(leetcode?.mediumSolved)} accent="var(--warning)" />
-      </div>
+      <Reveal delay={100}>
+        <div className="public-stats-grid">
+          <StatCard icon={ListChecks} label="Total Solved" value={formatNumber(leetcode?.totalSolved)} accent="var(--accent)" />
+          <StatCard icon={Trophy} label="Points" value={formatNumber(leetcode?.points)} accent="var(--gold)" />
+          <StatCard icon={ListChecks} label="Easy" value={formatNumber(leetcode?.easySolved)} accent="var(--success)" />
+          <StatCard icon={ListChecks} label="Medium" value={formatNumber(leetcode?.mediumSolved)} accent="var(--warning)" />
+        </div>
+      </Reveal>
     </div>
   );
 }

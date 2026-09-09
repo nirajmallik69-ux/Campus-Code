@@ -2,14 +2,44 @@ import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
 import Leaderboard from "../components/Leaderboard";
+import Reveal from "../components/Reveal";
+import AnimatedNumber from "../components/AnimatedNumber";
 import { useAuth } from "../context/AuthContext";
 import { leaderboardApi } from "../lib/api";
-import { formatNumber } from "../lib/utils";
+
+const PROMPT_TEXT = "campus-code rank --top 3";
+
+// Types the prompt out character by character once, then reports
+// back when it's finished so the terminal doesn't reveal rows
+// before the "command" has finished being "typed" - a small detail
+// that makes the whole thing read as one deliberate sequence rather
+// than several unrelated things loading at once.
+function useTypewriter(text, speed = 42) {
+  const [typed, setTyped] = useState("");
+  const [done, setDone] = useState(false);
+
+  useEffect(() => {
+    let i = 0;
+    const interval = setInterval(() => {
+      i += 1;
+      setTyped(text.slice(0, i));
+      if (i >= text.length) {
+        clearInterval(interval);
+        setDone(true);
+      }
+    }, speed);
+    return () => clearInterval(interval);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  return { typed, done };
+}
 
 function TerminalTopThree() {
   const navigate = useNavigate();
   const [rows, setRows] = useState(null);
   const [failed, setFailed] = useState(false);
+  const { typed, done: typingDone } = useTypewriter(PROMPT_TEXT);
 
   useEffect(() => {
     let cancelled = false;
@@ -37,38 +67,49 @@ function TerminalTopThree() {
         <span className="terminal-path">campus-code — rank</span>
       </div>
       <div className="terminal-body">
-        <div className="terminal-prompt">campus-code rank --top 3</div>
+        <div className="terminal-prompt">
+          {typed}
+          {!typingDone && <span className="terminal-typing-caret" />}
+        </div>
 
-        {rows === null && !failed && (
+        {typingDone && (
           <>
-            <div className="terminal-skel-row skeleton" style={{ height: 16, marginBottom: 10 }} />
-            <div className="terminal-skel-row skeleton" style={{ height: 16, marginBottom: 10 }} />
-            <div className="terminal-skel-row skeleton" style={{ height: 16 }} />
+            {rows === null && !failed && (
+              <>
+                <div className="terminal-skel-row skeleton" style={{ height: 16, marginBottom: 10 }} />
+                <div className="terminal-skel-row skeleton" style={{ height: 16, marginBottom: 10 }} />
+                <div className="terminal-skel-row skeleton" style={{ height: 16 }} />
+              </>
+            )}
+
+            {failed && <div className="terminal-empty">connection failed — try again shortly</div>}
+
+            {rows && rows.length === 0 && (
+              <div className="terminal-empty">no rankings yet — be the first to sync your stats</div>
+            )}
+
+            {rows &&
+              rows.map((student, i) => (
+                <div
+                  key={student.userId}
+                  className={`terminal-row rank-${student.rank}`}
+                  style={{ "--i": i }}
+                  onClick={() => navigate(`/student/${student.sicId}`)}
+                >
+                  <span className="terminal-row-rank">{String(student.rank).padStart(2, "0")}</span>
+                  <span className="terminal-row-name">{student.name}</span>
+                  <span className="terminal-row-points">
+                    <AnimatedNumber value={student.leetcodePoints} />
+                    pts
+                  </span>
+                </div>
+              ))}
+
+            <div className="terminal-cursor-line">
+              <span className="terminal-cursor" />
+            </div>
           </>
         )}
-
-        {failed && <div className="terminal-empty">connection failed — try again shortly</div>}
-
-        {rows && rows.length === 0 && (
-          <div className="terminal-empty">no rankings yet — be the first to sync your stats</div>
-        )}
-
-        {rows &&
-          rows.map((student) => (
-            <div
-              key={student.userId}
-              className={`terminal-row rank-${student.rank}`}
-              onClick={() => navigate(`/student/${student.sicId}`)}
-            >
-              <span className="terminal-row-rank">{String(student.rank).padStart(2, "0")}</span>
-              <span className="terminal-row-name">{student.name}</span>
-              <span className="terminal-row-points">{formatNumber(student.leetcodePoints)}pts</span>
-            </div>
-          ))}
-
-        <div className="terminal-cursor-line">
-          <span className="terminal-cursor" />
-        </div>
       </div>
     </div>
   );
@@ -106,31 +147,35 @@ export default function Home() {
             </div>
           </div>
 
-          <TerminalTopThree />
+          <Reveal delay={150}>
+            <TerminalTopThree />
+          </Reveal>
         </div>
       </section>
 
       <section className="container" id="leaderboard" style={{ paddingTop: 24, paddingBottom: 80 }}>
-        <div className="page-header flex-between" style={{ flexWrap: "wrap", gap: 16 }}>
-          <div>
-            <span className="eyebrow">Campus leaderboard</span>
-            <h1>Where every student stands</h1>
-          </div>
+        <Reveal>
+          <div className="page-header flex-between" style={{ flexWrap: "wrap", gap: 16 }}>
+            <div>
+              <span className="eyebrow">Campus leaderboard</span>
+              <h1>Where every student stands</h1>
+            </div>
 
-          <div className="year-tabs" role="tablist" aria-label="Filter leaderboard by year">
-            {[null, 1, 2, 3, 4].map((y) => (
-              <button
-                key={y ?? "all"}
-                role="tab"
-                aria-selected={year === y}
-                className={`year-tab ${year === y ? "active" : ""}`}
-                onClick={() => setYear(y)}
-              >
-                {y ? `Year ${y}` : "All Years"}
-              </button>
-            ))}
+            <div className="year-tabs" role="tablist" aria-label="Filter leaderboard by year">
+              {[null, 1, 2, 3, 4].map((y) => (
+                <button
+                  key={y ?? "all"}
+                  role="tab"
+                  aria-selected={year === y}
+                  className={`year-tab ${year === y ? "active" : ""}`}
+                  onClick={() => setYear(y)}
+                >
+                  {y ? `Year ${y}` : "All Years"}
+                </button>
+              ))}
+            </div>
           </div>
-        </div>
+        </Reveal>
 
         <Leaderboard year={year} />
       </section>

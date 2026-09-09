@@ -160,16 +160,16 @@ export default function Leaderboard({ year = null, showPodium = true }) {
                 </tr>
               </thead>
               <tbody>
-                {filtered.map((student) => (
-                  <LeaderboardRow key={student.userId} student={student} />
+                {filtered.map((student, i) => (
+                  <LeaderboardRow key={student.userId} student={student} index={i} />
                 ))}
               </tbody>
             </table>
           </div>
 
           <div className="student-card-list mobile-only">
-            {filtered.map((student) => (
-              <StudentCardRow key={student.userId} student={student} />
+            {filtered.map((student, i) => (
+              <StudentCardRow key={student.userId} student={student} index={i} />
             ))}
           </div>
         </>

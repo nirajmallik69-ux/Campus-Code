@@ -75,10 +75,6 @@ body {
 
 body {
   background: var(--bg);
-  background-image:
-    radial-gradient(ellipse 900px 500px at 15% -10%, rgba(74, 222, 128, 0.07), transparent 60%),
-    radial-gradient(ellipse 900px 600px at 90% 10%, rgba(167, 139, 250, 0.05), transparent 60%);
-  background-attachment: fixed;
   color: var(--text-primary);
   font-family: var(--font-body);
   -webkit-font-smoothing: antialiased;
@@ -783,6 +779,11 @@ img {
   padding: 8px 0;
   cursor: pointer;
   border-top: 1px solid rgba(167, 190, 170, 0.08);
+  transition: transform 0.25s var(--ease-premium), padding-left 0.25s ease;
+}
+
+.terminal-row:hover {
+  transform: translateX(3px);
 }
 
 .terminal-row:first-of-type {
@@ -1695,6 +1696,293 @@ img {
   display: flex;
   align-items: center;
   justify-content: space-between;
+}
+
+/* ==========================================================
+   MOTION & PREMIUM POLISH
+   ========================================================== */
+
+/* Shared easing so every hover/transform in the app moves the same
+   way - a big part of what makes motion read as "premium" rather
+   than ad hoc is that it's all the same physics. */
+:root {
+  --ease-premium: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-snap: cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* ---------------- Ambient background drift ----------------
+   Very slow, very subtle - this should read as "the page feels
+   alive" on a second glance, never as something you consciously
+   notice moving. */
+
+body {
+  background-image:
+    radial-gradient(ellipse 900px 500px at 15% -10%, rgba(74, 222, 128, 0.07), transparent 60%),
+    radial-gradient(ellipse 900px 600px at 90% 10%, rgba(167, 139, 250, 0.05), transparent 60%);
+  background-attachment: fixed;
+  animation: ambient-drift 24s ease-in-out infinite alternate;
+}
+
+@keyframes ambient-drift {
+  0% { background-position: 0% 0%, 100% 0%; }
+  100% { background-position: 2% 3%, 98% 4%; }
+}
+
+/* ---------------- Scroll reveal ----------------
+   Paired with the <Reveal> component (IntersectionObserver-based):
+   it adds .reveal on mount and .reveal-visible once the element
+   enters the viewport. Respects reduced-motion below. */
+
+.reveal {
+  opacity: 0;
+  transform: translateY(18px);
+  transition: opacity 0.7s var(--ease-premium), transform 0.7s var(--ease-premium);
+}
+
+.reveal-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ---------------- Card depth & hover physics ---------------- */
+
+.card {
+  transition: transform 0.35s var(--ease-premium), box-shadow 0.35s var(--ease-premium), border-color 0.35s ease;
+}
+
+.card-hover-lift:hover {
+  transform: translateY(-4px);
+  border-color: var(--border-strong);
+  box-shadow: var(--shadow-lg);
+}
+
+/* A frosted, elevated surface for the highest-attention moments -
+   used sparingly (hero terminal, rank #1 podium, sync/status
+   panels) rather than on every card, so it still reads as special. */
+.card-glass {
+  background: linear-gradient(180deg, rgba(19, 26, 20, 0.72) 0%, rgba(14, 19, 15, 0.85) 100%);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border: 1px solid var(--border-strong);
+}
+
+.stat-card {
+  transition: transform 0.3s var(--ease-premium), border-color 0.3s ease, box-shadow 0.3s var(--ease-premium);
+}
+
+.stat-card:hover {
+  transform: translateY(-3px);
+  border-color: rgba(74, 222, 128, 0.3);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35);
+}
+
+.stat-card .stat-icon {
+  transition: transform 0.3s var(--ease-snap), color 0.3s ease;
+}
+
+.stat-card:hover .stat-icon {
+  transform: scale(1.12) rotate(-4deg);
+  color: var(--accent);
+}
+
+/* ---------------- Button physics ---------------- */
+
+.btn {
+  transition: transform 0.25s var(--ease-premium), box-shadow 0.25s var(--ease-premium),
+    background 0.25s ease, border-color 0.25s ease, opacity 0.15s ease;
+}
+
+.btn-primary {
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-primary::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(120deg, transparent, rgba(255, 255, 255, 0.16), transparent);
+  transform: translateX(-120%);
+  transition: transform 0.6s var(--ease-premium);
+}
+
+.btn-primary:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 14px 34px rgba(74, 222, 128, 0.3);
+}
+
+.btn-primary:hover:not(:disabled)::before {
+  transform: translateX(120%);
+}
+
+.btn-secondary:hover:not(:disabled) {
+  transform: translateY(-2px);
+}
+
+/* ---------------- Navbar depth on scroll ---------------- */
+
+.navbar {
+  transition: background 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+}
+
+.navbar.navbar-scrolled {
+  background: rgba(6, 10, 20, 0.92);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35);
+  border-bottom-color: rgba(167, 190, 170, 0.16);
+}
+
+.brand-mark {
+  transition: box-shadow 0.3s ease, border-color 0.3s ease;
+}
+
+.brand:hover .brand-mark {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(74, 222, 128, 0.12);
+}
+
+/* ---------------- Podium: the one place to spend extra polish ---------------- */
+
+.podium-card {
+  transition: transform 0.4s var(--ease-premium), box-shadow 0.4s var(--ease-premium);
+}
+
+.podium-card:hover {
+  transform: translateY(-6px);
+}
+
+.podium-card.rank-1 {
+  animation: podium-float 4.5s ease-in-out infinite;
+}
+
+@keyframes podium-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+}
+
+.podium-card.rank-1::after {
+  content: "";
+  position: absolute;
+  inset: -40% -20% auto -20%;
+  height: 140%;
+  background: radial-gradient(circle at 50% 0%, rgba(245, 196, 81, 0.16), transparent 65%);
+  pointer-events: none;
+  z-index: -1;
+}
+
+.podium-crown {
+  animation: crown-glint 3s ease-in-out infinite;
+}
+
+@keyframes crown-glint {
+  0%, 100% { filter: drop-shadow(0 0 0 rgba(245, 196, 81, 0)); }
+  50% { filter: drop-shadow(0 0 8px rgba(245, 196, 81, 0.55)); }
+}
+
+/* ---------------- Leaderboard row entrance stagger ----------------
+   Each row/card gets --i set inline (its index) so rows cascade in
+   instead of popping in all at once. */
+
+.leaderboard-table tbody tr,
+.student-card,
+.terminal-row {
+  animation: row-in 0.5s var(--ease-premium) both;
+  animation-delay: calc(var(--i, 0) * 45ms);
+}
+
+@keyframes row-in {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.leaderboard-table tbody tr {
+  transition: background 0.25s ease, transform 0.25s var(--ease-premium);
+}
+
+.leaderboard-table tbody tr:hover {
+  transform: translateX(2px);
+}
+
+.student-card {
+  transition: transform 0.3s var(--ease-premium), border-color 0.3s ease;
+}
+
+.student-card:hover {
+  transform: translateY(-3px);
+  border-color: var(--border-strong);
+}
+
+/* ---------------- Terminal: typing effect support ----------------
+   The prompt text is revealed via a JS-driven width/steps typewriter
+   (see Home.jsx) - this just styles the caret that trails it while
+   typing, distinct from the idle blinking cursor at the end. */
+
+.terminal-typing-caret {
+  display: inline-block;
+  width: 7px;
+  height: 15px;
+  background: var(--accent);
+  margin-left: 2px;
+  vertical-align: text-bottom;
+  animation: cursor-blink 0.9s step-end infinite;
+}
+
+.terminal-window {
+  transition: box-shadow 0.4s ease, border-color 0.4s ease;
+}
+
+.terminal-window:hover {
+  border-color: rgba(74, 222, 128, 0.25);
+  box-shadow: var(--shadow-lg), 0 0 40px rgba(74, 222, 128, 0.06);
+}
+
+.sync-icon-pulse {
+  animation: sync-pulse 3s ease-in-out infinite;
+}
+
+@keyframes sync-pulse {
+  0%, 100% { opacity: 0.75; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.08); }
+}
+
+/* ---------------- Hero polish ---------------- */
+
+.hero-title span {
+  display: block;
+  animation: title-in 0.7s var(--ease-premium) both;
+}
+
+.hero-title span:nth-child(1) { animation-delay: 0.05s; }
+.hero-title span:nth-child(2) { animation-delay: 0.15s; }
+.hero-title span:nth-child(3) { animation-delay: 0.25s; }
+
+@keyframes title-in {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ---------------- Animated number ---------------- */
+
+.animated-number {
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------------- Respect reduced motion ---------------- */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+  body {
+    animation: none;
+  }
+  .reveal {
+    opacity: 1;
+    transform: none;
+  }
 }
 
 /* ==========================================================
