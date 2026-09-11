@@ -35,9 +35,9 @@ export default function Navbar() {
       <div className="navbar-inner">
         <NavLink to="/" className="brand" onClick={closeMenu}>
           <span className="brand-mark" aria-hidden="true">
-            &gt;_
+            C
           </span>
-          CAMPUS CODE
+          Campus Code
         </NavLink>
 
         <nav className="nav-links">

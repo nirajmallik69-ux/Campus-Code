@@ -6,7 +6,7 @@ export default function Footer() {
       <div className="container footer-inner">
         <div className="footer-brand">
           <span className="brand" style={{ fontSize: 16 }}>
-            CAMPUS CODE
+            Campus Code
           </span>
           <span className="footer-tagline">Powered by Switch</span>
         </div>
