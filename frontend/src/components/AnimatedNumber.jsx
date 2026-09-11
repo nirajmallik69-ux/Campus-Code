@@ -45,7 +45,7 @@ export default function AnimatedNumber({ value, duration = 900, formatter }) {
           observer.disconnect();
         }
       },
-      { threshold: 0.4 }
+      { threshold: 0, rootMargin: "0px 0px -10px 0px" }
     );
 
     observer.observe(node);
