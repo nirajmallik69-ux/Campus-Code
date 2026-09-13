@@ -2268,15 +2268,59 @@ img {
     grid-template-columns: repeat(2, 1fr);
   }
   .podium {
-    grid-template-columns: 1fr 1fr 1fr;
-    gap: 8px;
+    grid-template-columns: 1fr;
+    gap: 12px;
   }
   .podium-card {
-    padding: 16px 8px;
+    padding: 18px 20px;
+  }
+  .podium-card.rank-1,
+  .podium-card.rank-2,
+  .podium-card.rank-3 {
+    order: initial;
   }
   .podium-card.rank-1 {
     padding-top: 22px;
     padding-bottom: 22px;
+  }
+  .podium-card-inner {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    text-align: left;
+  }
+  .podium-avatar,
+  .podium-crown {
+    margin: 0;
+    flex-shrink: 0;
+  }
+  .podium-crown {
+    position: absolute;
+    top: 10px;
+    right: 14px;
+  }
+  .podium-card.rank-2 .avatar,
+  .podium-card.rank-3 .avatar {
+    width: 52px;
+    height: 52px;
+    font-size: 17px;
+  }
+  .podium-info {
+    flex: 1;
+    min-width: 0;
+  }
+  .podium-name,
+  .podium-sic {
+    text-align: left;
+  }
+  .podium-points-wrap {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .podium-solved {
+    margin-top: 0;
   }
   .leaderboard-toolbar {
     flex-direction: column;

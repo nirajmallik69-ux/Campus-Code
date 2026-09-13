@@ -18,6 +18,7 @@ function PodiumCard({ student, rank }) {
       <div
         role="button"
         tabIndex={0}
+        className="podium-card-inner"
         style={{ outline: "none" }}
         onClick={() => navigate(`/student/${student.sicId}`)}
         onKeyDown={(e) => e.key === "Enter" && navigate(`/student/${student.sicId}`)}
@@ -30,13 +31,17 @@ function PodiumCard({ student, rank }) {
         <div className="podium-avatar">
           <Avatar src={student.profilePicture} name={student.name} />
         </div>
-        <div className="podium-name">{student.name}</div>
-        <div className="podium-sic">{student.sicId}</div>
-        <div className="podium-points">
-          <AnimatedNumber value={student.leetcodePoints} /> pts
-        </div>
-        <div className="podium-solved">
-          <AnimatedNumber value={student.totalSolved} /> solved
+        <div className="podium-info">
+          <div className="podium-name">{student.name}</div>
+          <div className="podium-sic">{student.sicId}</div>
+          <div className="podium-points-wrap">
+            <div className="podium-points">
+              <AnimatedNumber value={student.leetcodePoints} /> pts
+            </div>
+            <div className="podium-solved">
+              <AnimatedNumber value={student.totalSolved} /> solved
+            </div>
+          </div>
         </div>
       </div>
     </Reveal>
