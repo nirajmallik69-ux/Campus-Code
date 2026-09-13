@@ -1149,21 +1149,21 @@ img {
   order: 2;
   padding-top: 32px;
   padding-bottom: 32px;
-  border-color: rgba(245, 196, 81, 0.45);
-  background: linear-gradient(180deg, rgba(245, 196, 81, 0.12), var(--surface) 70%);
-  box-shadow: 0 0 0 1px rgba(245, 196, 81, 0.2), 0 16px 40px rgba(245, 196, 81, 0.12);
+  border-color: var(--gold-strong);
+  background: linear-gradient(180deg, rgba(245, 196, 81, 0.1), var(--surface) 65%);
+  box-shadow: 0 0 0 1px var(--gold-strong), 0 12px 28px rgba(212, 160, 23, 0.18);
 }
 
 .podium-card.rank-2 {
   order: 1;
-  border-color: rgba(199, 208, 220, 0.35);
-  background: linear-gradient(180deg, rgba(199, 208, 220, 0.08), var(--surface) 70%);
+  border-color: var(--silver-strong);
+  background: linear-gradient(180deg, rgba(138, 148, 163, 0.08), var(--surface) 65%);
 }
 
 .podium-card.rank-3 {
   order: 3;
-  border-color: rgba(224, 163, 112, 0.35);
-  background: linear-gradient(180deg, rgba(224, 163, 112, 0.08), var(--surface) 70%);
+  border-color: var(--bronze-strong);
+  background: linear-gradient(180deg, rgba(165, 103, 58, 0.08), var(--surface) 65%);
 }
 
 .podium-crown {
