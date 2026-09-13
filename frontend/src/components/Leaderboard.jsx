@@ -74,6 +74,25 @@ export default function Leaderboard({ year = null, showPodium = true }) {
   if (loading) {
     return (
       <div>
+        {showPodium && (
+          <div className="podium" aria-hidden="true">
+            <div className="podium-card rank-1" style={{ minHeight: 260 }}>
+              <div className="skeleton" style={{ width: 76, height: 76, borderRadius: "50%", margin: "0 auto 12px" }} />
+              <div className="skeleton" style={{ height: 16, width: "70%", margin: "0 auto 8px" }} />
+              <div className="skeleton" style={{ height: 22, width: "50%", margin: "0 auto" }} />
+            </div>
+            <div className="podium-card rank-2" style={{ minHeight: 220 }}>
+              <div className="skeleton" style={{ width: 60, height: 60, borderRadius: "50%", margin: "0 auto 12px" }} />
+              <div className="skeleton" style={{ height: 16, width: "70%", margin: "0 auto 8px" }} />
+              <div className="skeleton" style={{ height: 22, width: "50%", margin: "0 auto" }} />
+            </div>
+            <div className="podium-card rank-3" style={{ minHeight: 220 }}>
+              <div className="skeleton" style={{ width: 60, height: 60, borderRadius: "50%", margin: "0 auto 12px" }} />
+              <div className="skeleton" style={{ height: 16, width: "70%", margin: "0 auto 8px" }} />
+              <div className="skeleton" style={{ height: 22, width: "50%", margin: "0 auto" }} />
+            </div>
+          </div>
+        )}
         <div className="leaderboard-toolbar">
           <div className="search-box">
             <Search size={16} />

@@ -41,17 +41,23 @@ function HeroPreview() {
       </div>
 
       {rows === null && !failed && (
-        <div style={{ padding: "24px 0" }}>
-          <div className="skeleton" style={{ height: 18, marginBottom: 16 }} />
-          <div className="skeleton" style={{ height: 18, marginBottom: 16 }} />
-          <div className="skeleton" style={{ height: 18 }} />
+        <div style={{ padding: "16px 0", minHeight: 198 }}>
+          <div className="skeleton" style={{ height: 34, marginBottom: 32 }} />
+          <div className="skeleton" style={{ height: 34, marginBottom: 32 }} />
+          <div className="skeleton" style={{ height: 34 }} />
         </div>
       )}
 
-      {failed && <div className="preview-empty">Couldn't load rankings — try again shortly.</div>}
+      {failed && (
+        <div className="preview-empty" style={{ minHeight: 198, display: "flex", alignItems: "center", justifyContent: "center" }}>
+          Couldn't load rankings — try again shortly.
+        </div>
+      )}
 
       {rows && rows.length === 0 && (
-        <div className="preview-empty">No rankings yet — be the first to sync your stats.</div>
+        <div className="preview-empty" style={{ minHeight: 198, display: "flex", alignItems: "center", justifyContent: "center" }}>
+          No rankings yet — be the first to sync your stats.
+        </div>
       )}
 
       {rows &&
@@ -269,7 +275,11 @@ export default function Home() {
         ))}
       </section>
 
-      <section className="container" id="leaderboard" style={{ paddingTop: 24, paddingBottom: 80 }}>
+      <section
+        className="container"
+        id="leaderboard"
+        style={{ paddingTop: 24, paddingBottom: 80, scrollMarginTop: "var(--nav-height)" }}
+      >
         <Reveal>
           <div className="flex-between" style={{ flexWrap: "wrap", gap: 16, marginBottom: 8 }}>
             <div className="flag-heading">
