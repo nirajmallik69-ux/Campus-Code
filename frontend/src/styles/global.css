@@ -3,62 +3,69 @@
    ========================================================== */
 
 :root {
-  /* Surfaces — warm charcoal, not a cold or green-tinted black */
-  --bg: #100d0a;
-  --bg-elevated: #15110d;
-  --surface: #1a1510;
-  --surface-2: #211a13;
-  --surface-hover: #2a2118;
-  --border: rgba(214, 196, 168, 0.12);
-  --border-strong: rgba(214, 196, 168, 0.22);
+  /* Surfaces — light theme, matching the institute's actual site */
+  --bg: #ffffff;
+  --bg-elevated: #f7f8fa;
+  --surface: #ffffff;
+  --surface-2: #f2f4f7;
+  --surface-hover: #eaedf1;
+  --border: #e3e6ea;
+  --border-strong: #cdd3da;
 
-  /* Text — warm off-white/cream, not blue-white */
-  --text-primary: #f5efe4;
-  --text-secondary: #b3a692;
-  --text-muted: #7a6f5e;
+  /* Text */
+  --text-primary: #16181d;
+  --text-secondary: #55606e;
+  --text-muted: #8892a0;
 
-  /* Accents — a single editorial gold identity. This is deliberately
-     not the generic tech green/blue/violet SaaS palette: gold reads
-     as achievement/ranking (the exact metaphor a leaderboard needs)
-     and as premium/editorial rather than "coding tool." Forest is
-     kept only as a rare, specific secondary, never blended into a
-     gradient with the primary color. */
-  --accent: #e3b559;
-  --accent-2: #edc87e;
-  --accent-strong: #cf9d3d;
-  --violet: #7c9a7e;
-  --violet-strong: #5f7f61;
+  /* Accents — matches the institute's actual brand: deep navy as
+     the primary color (nav, buttons, links), with amber/orange and
+     crimson as the two secondary accents used for the ribbon/flag
+     card corners and section dividers, cycling the same way the
+     institute's own event-card ribbons do. */
+  --accent: #14468f;
+  --accent-2: #1e5bb0;
+  --accent-strong: #0d3568;
+  --violet: #14468f;
+  --violet-strong: #0d3568;
 
-  /* Rank accents */
-  --gold: #f5c451;
-  --gold-strong: #d4a017;
-  --silver: #c7d0dc;
-  --silver-strong: #9aa5b1;
-  --bronze: #e0a370;
-  --bronze-strong: #b97a45;
+  --amber: #e08c1f;
+  --amber-strong: #c4740f;
+  --crimson: #c1272d;
+  --crimson-strong: #9e1f24;
+
+  /* Rank accents (podium) - kept for the leaderboard's gold/silver/
+     bronze metaphor, distinct from the institute's own brand colors */
+  --gold: #d4a017;
+  --gold-strong: #b3860f;
+  --silver: #8a94a3;
+  --silver-strong: #6b7480;
+  --bronze: #a5673a;
+  --bronze-strong: #855128;
 
   /* Status */
-  --success: #7fb885;
-  --danger: #e0796f;
-  --warning: #e3b559;
+  --success: #1f8a4c;
+  --danger: #c1272d;
+  --warning: #e08c1f;
 
-  /* Elevation */
-  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
-  --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.35);
-  --shadow-lg: 0 16px 48px rgba(0, 0, 0, 0.45);
-  --shadow-glow: 0 0 0 1px rgba(227, 181, 89, 0.15), 0 8px 32px rgba(227, 181, 89, 0.1);
+  /* Elevation — much lighter than a dark theme needs */
+  --shadow-sm: 0 1px 2px rgba(16, 24, 40, 0.06);
+  --shadow-md: 0 4px 16px rgba(16, 24, 40, 0.08);
+  --shadow-lg: 0 12px 32px rgba(16, 24, 40, 0.12);
+  --shadow-glow: 0 0 0 1px rgba(20, 70, 143, 0.12), 0 8px 24px rgba(20, 70, 143, 0.1);
 
-  /* Radii */
-  --radius-sm: 8px;
-  --radius-md: 14px;
-  --radius-lg: 20px;
+  /* Radii — sharper, more corporate/institutional than a rounded
+     consumer-app feel: the institute's own buttons and cards are
+     near-rectangular with a small corner radius, not pills. */
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 10px;
   --radius-full: 999px;
 
-  /* Type — an editorial serif for headings (character, not another
-     geometric sans), a clean humanist sans for body text, and mono
-     kept only for genuine numeric/data moments (ranks, points). */
-  --font-body: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  --font-display: "Fraunces", "Georgia", serif;
+  /* Type — a bold geometric sans for headings (matching the
+     institute's chunky, confident display type), a clean sans for
+     body copy, mono kept only for genuine numeric leaderboard data. */
+  --font-body: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-display: "Poppins", "Inter", sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 
   /* 8-point spacing scale */
@@ -118,7 +125,7 @@ img {
 }
 
 ::selection {
-  background: rgba(227, 181, 89, 0.28);
+  background: rgba(20, 70, 143, 0.16);
 }
 
 ::-webkit-scrollbar {
@@ -158,36 +165,66 @@ img {
 .eyebrow {
   display: inline-flex;
   align-items: center;
-  gap: 10px;
   font-family: var(--font-body);
   font-size: 12.5px;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.14em;
+  letter-spacing: 0.08em;
   color: var(--accent);
-  margin-bottom: 14px;
-}
-
-.eyebrow::before {
-  content: "";
-  display: inline-block;
-  width: 22px;
-  height: 1px;
-  background: var(--accent);
-  opacity: 0.7;
+  margin-bottom: 12px;
 }
 
 .page-header h1 {
   font-family: var(--font-display);
-  font-size: clamp(30px, 4vw, 44px);
-  font-weight: 600;
+  font-size: clamp(28px, 4vw, 40px);
+  font-weight: 700;
   letter-spacing: -0.01em;
+  color: var(--text-primary);
 }
 
 .page-header p {
   color: var(--text-secondary);
   margin-top: 10px;
   max-width: 60ch;
+}
+
+/* ---------------- Flag heading (institute's signature section-title motif) ----------------
+   A folded-paper triangle sits behind a two-part heading where the
+   first word(s) are heavy and the rest are a lighter weight - the
+   exact pattern used for every major section title on the
+   institute's own site ("Academic Programs", "Silicon News", etc).
+   Used on the landing page's section headers. */
+
+.flag-heading {
+  position: relative;
+  margin-bottom: 8px;
+  padding-top: 8px;
+}
+
+.flag-heading::before {
+  content: "";
+  position: absolute;
+  top: -14px;
+  left: -18px;
+  width: 84px;
+  height: 84px;
+  background: var(--surface-2);
+  clip-path: polygon(0 0, 100% 0, 0 100%);
+  z-index: 0;
+}
+
+.flag-heading h2 {
+  position: relative;
+  z-index: 1;
+  font-family: var(--font-display);
+  font-size: clamp(26px, 3.4vw, 38px);
+  font-weight: 400;
+  line-height: 1.15;
+  color: var(--text-primary);
+}
+
+.flag-heading h2 strong {
+  font-weight: 800;
 }
 
 /* ---------------- Card ---------------- */
@@ -211,11 +248,13 @@ img {
   justify-content: center;
   gap: 8px;
   font-family: var(--font-body);
-  font-weight: 600;
-  font-size: 14.5px;
-  border-radius: var(--radius-md);
+  font-weight: 700;
+  font-size: 13.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  border-radius: var(--radius-sm);
   border: 1px solid transparent;
-  padding: 12px 22px;
+  padding: 13px 26px;
   cursor: pointer;
   transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease, border-color 0.15s ease, opacity 0.15s ease;
   white-space: nowrap;
@@ -232,13 +271,13 @@ img {
 
 .btn-primary {
   background: var(--accent-strong);
-  color: #241a0c;
-  box-shadow: 0 8px 24px rgba(227, 181, 89, 0.18);
+  color: #ffffff;
+  box-shadow: 0 8px 24px rgba(20, 70, 143, 0.22);
 }
 
 .btn-primary:hover:not(:disabled) {
   background: var(--accent);
-  box-shadow: 0 10px 30px rgba(227, 181, 89, 0.26);
+  box-shadow: 0 10px 30px rgba(20, 70, 143, 0.28);
 }
 
 .btn-secondary {
@@ -338,7 +377,7 @@ img {
 .input:focus {
   outline: none;
   border-color: var(--accent);
-  box-shadow: 0 0 0 3px rgba(227, 181, 89, 0.16);
+  box-shadow: 0 0 0 3px rgba(20, 70, 143, 0.16);
 }
 
 .input:disabled {
@@ -410,8 +449,8 @@ img {
 
 .badge-accent {
   color: var(--accent);
-  border-color: rgba(227, 181, 89, 0.35);
-  background: rgba(227, 181, 89, 0.08);
+  border-color: rgba(20, 70, 143, 0.3);
+  background: rgba(20, 70, 143, 0.06);
 }
 
 .badge-gold {
@@ -565,10 +604,22 @@ img {
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #241a0c;
+  color: #ffffff;
   font-weight: 700;
   font-family: var(--font-mono);
   border: 2px solid var(--border-strong);
+}
+
+/* ---------------- Top announcement bar ---------------- */
+
+.top-bar {
+  background: var(--accent-strong);
+  color: #ffffff;
+  text-align: center;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 9px 16px;
+  letter-spacing: 0.01em;
 }
 
 /* ---------------- Navbar ---------------- */
@@ -580,8 +631,7 @@ img {
   height: var(--nav-height);
   display: flex;
   align-items: center;
-  background: rgba(6, 10, 20, 0.78);
-  backdrop-filter: blur(14px);
+  background: #ffffff;
   border-bottom: 1px solid var(--border);
 }
 
@@ -600,25 +650,24 @@ img {
   align-items: center;
   gap: 12px;
   font-family: var(--font-display);
-  font-weight: 600;
-  font-size: 20px;
+  font-weight: 700;
+  font-size: 19px;
   letter-spacing: -0.01em;
+  color: var(--text-primary);
 }
 
 .brand-mark {
   width: 36px;
   height: 36px;
-  border-radius: 50%;
-  background: var(--bg-elevated);
-  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  background: var(--accent-strong);
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--accent);
+  color: #ffffff;
   font-family: var(--font-display);
-  font-weight: 600;
+  font-weight: 700;
   font-size: 16px;
-  font-style: italic;
 }
 
 .nav-links {
@@ -630,19 +679,21 @@ img {
 .nav-link {
   padding: 9px 14px;
   border-radius: var(--radius-sm);
-  font-size: 14.5px;
-  font-weight: 500;
-  color: var(--text-secondary);
+  font-size: 13.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: var(--accent);
   transition: color 0.15s ease, background 0.15s ease;
 }
 
 .nav-link:hover {
-  color: var(--text-primary);
+  color: var(--accent-strong);
   background: var(--surface-2);
 }
 
 .nav-link.active {
-  color: var(--text-primary);
+  color: var(--accent-strong);
   background: var(--surface-2);
 }
 
@@ -725,14 +776,6 @@ img {
   overflow: hidden;
 }
 
-.hero-preview-card::before {
-  content: "";
-  position: absolute;
-  inset: -1px;
-  background: radial-gradient(500px 220px at 20% 0%, rgba(227, 181, 89, 0.14), transparent 70%);
-  pointer-events: none;
-}
-
 /* ---------------- Editorial leaderboard preview (hero) ----------------
    The hero's one deliberate visual moment: a real ranked list of the
    actual top 3 students, styled like an editorial "leaderboard"
@@ -756,10 +799,10 @@ img {
   padding: 10px 16px;
   border-radius: var(--radius-full);
   background: var(--accent);
-  color: #241a0c;
+  color: #ffffff;
   font-size: 12.5px;
   font-weight: 700;
-  box-shadow: 0 12px 28px rgba(227, 181, 89, 0.28);
+  box-shadow: 0 12px 28px rgba(20, 70, 143, 0.16);
   z-index: 1;
 }
 
@@ -802,18 +845,22 @@ img {
 }
 
 .preview-rank {
-  font-family: var(--font-display);
-  font-weight: 600;
-  font-style: italic;
-  font-size: 26px;
-  width: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 34px;
   flex-shrink: 0;
-  color: var(--text-muted);
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 14px;
+  color: #ffffff;
+  background: var(--gold);
+  clip-path: polygon(0 0, 100% 0, 82% 50%, 100% 100%, 0 100%);
 }
 
-.preview-row:nth-child(2) .preview-rank { color: var(--gold); }
-.preview-row:nth-child(3) .preview-rank { color: var(--silver); }
-.preview-row:nth-child(4) .preview-rank { color: var(--bronze); }
+.preview-row:nth-child(3) .preview-rank { background: var(--silver); }
+.preview-row:nth-child(4) .preview-rank { background: var(--bronze); }
 
 .preview-info {
   flex: 1;
@@ -864,7 +911,7 @@ img {
 }
 
 .contrast-panel.is-solution {
-  background: linear-gradient(165deg, rgba(227, 181, 89, 0.08), var(--surface) 60%);
+  background: linear-gradient(165deg, rgba(20, 70, 143, 0.06), var(--surface) 60%);
   border-left: 1px solid var(--border);
 }
 
@@ -941,6 +988,49 @@ img {
   min-height: 220px;
 }
 
+/* ---------------- Diagonal section divider ----------------
+   A thin diagonal line crossing the full width - the institute's
+   own site uses this exact device between the hero and the next
+   section. Purely decorative, sits between two sections. */
+
+.diagonal-divider {
+  height: 2px;
+  background: var(--accent);
+  transform: rotate(-0.6deg);
+  transform-origin: left;
+  margin: 8px 0 40px;
+  opacity: 0.85;
+}
+
+/* A full-bleed solid-color diagonal-topped band, matching the
+   "Ranking & Recognition" style section on the institute's site -
+   used sparingly, for exactly one section that deserves the
+   heaviest visual weight on the page. */
+
+.diagonal-band {
+  position: relative;
+  background: var(--amber);
+  color: #ffffff;
+  padding: 72px 0;
+  clip-path: polygon(0 6%, 100% 0, 100% 100%, 0 100%);
+  margin-top: -24px;
+}
+
+.diagonal-band .flag-heading::before {
+  background: rgba(255, 255, 255, 0.18);
+}
+
+.diagonal-band .flag-heading h2 {
+  color: #ffffff;
+}
+
+.diagonal-band p {
+  color: rgba(255, 255, 255, 0.92);
+  font-size: 16px;
+  line-height: 1.7;
+  max-width: 70ch;
+}
+
 /* ---------------- Live numbers strip ---------------- */
 
 .numbers-strip {
@@ -956,6 +1046,10 @@ img {
   margin: 0 auto;
   border-left: 1px solid var(--border);
   border-right: 1px solid var(--border);
+}
+
+.diagonal-band .numbers-strip {
+  border-color: rgba(255, 255, 255, 0.3);
 }
 
 .numbers-strip-item {
@@ -1168,7 +1262,7 @@ img {
 
 .year-tab.active {
   background: var(--accent-strong);
-  color: #241a0c;
+  color: #ffffff;
 }
 
 .leaderboard-table {
@@ -1276,7 +1370,7 @@ img {
 
 .pagination button.active {
   background: var(--accent-strong);
-  color: #241a0c;
+  color: #ffffff;
   border-color: transparent;
 }
 
@@ -1458,7 +1552,7 @@ img {
 
 .step-dot.done {
   background: var(--accent-strong);
-  color: #241a0c;
+  color: #ffffff;
   border-color: transparent;
 }
 
@@ -1638,7 +1732,7 @@ img {
   height: 30px;
   border-radius: 50%;
   background: var(--accent);
-  color: #241a0c;
+  color: #ffffff;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1743,42 +1837,53 @@ img {
 /* ---------------- Footer ---------------- */
 
 .footer {
-  border-top: 1px solid var(--border);
-  padding: 36px 0;
+  background: var(--accent-strong);
+  color: #ffffff;
+  padding: 56px 0 40px;
   margin-top: 60px;
 }
 
-.footer-inner {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 16px;
+.footer-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 40px;
 }
 
-.footer-brand {
+.footer-col {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 12px;
 }
 
-.footer-tagline {
-  font-size: 13px;
-  color: var(--text-muted);
+.footer-col h4 {
+  font-family: var(--font-display);
+  font-size: 15px;
+  font-weight: 700;
+  color: #ffffff;
+  padding-bottom: 10px;
+  margin-bottom: 4px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.25);
 }
 
-.footer-links {
-  display: flex;
-  gap: 22px;
-}
-
-.footer-links a {
+.footer-col a {
   font-size: 13.5px;
-  color: var(--text-secondary);
+  color: rgba(255, 255, 255, 0.85);
+  transition: color 0.15s ease;
 }
 
-.footer-links a:hover {
-  color: var(--accent);
+.footer-col a:hover {
+  color: #ffffff;
+}
+
+.footer-note {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.7);
+  line-height: 1.6;
+}
+
+.footer-powered {
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.9);
 }
 
 /* ---------------- Utility ---------------- */
@@ -1840,23 +1945,11 @@ img {
   --ease-snap: cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-/* ---------------- Ambient background drift ----------------
-   Very slow, very subtle - this should read as "the page feels
-   alive" on a second glance, never as something you consciously
-   notice moving. */
-
-body {
-  background-image:
-    radial-gradient(ellipse 900px 500px at 15% -10%, rgba(227, 181, 89, 0.06), transparent 60%),
-    radial-gradient(ellipse 900px 600px at 90% 10%, rgba(124, 154, 126, 0.05), transparent 60%);
-  background-attachment: fixed;
-  animation: ambient-drift 24s ease-in-out infinite alternate;
-}
-
-@keyframes ambient-drift {
-  0% { background-position: 0% 0%, 100% 0%; }
-  100% { background-position: 2% 3%, 98% 4%; }
-}
+/* Note: the ambient glow/drift effect used in earlier dark-theme
+   versions of this site was removed here - it doesn't match the
+   institute's actual visual language, which is flat, crisp white
+   with solid color blocks and diagonal cuts rather than soft
+   ambient gradients. */
 
 /* ---------------- Scroll reveal ----------------
    Paired with the <Reveal> component (IntersectionObserver-based):
@@ -1890,10 +1983,9 @@ body {
    used sparingly (hero terminal, rank #1 podium, sync/status
    panels) rather than on every card, so it still reads as special. */
 .card-glass {
-  background: linear-gradient(180deg, rgba(26, 21, 16, 0.72) 0%, rgba(21, 17, 13, 0.85) 100%);
-  backdrop-filter: blur(18px);
-  -webkit-backdrop-filter: blur(18px);
+  background: #ffffff;
   border: 1px solid var(--border-strong);
+  box-shadow: var(--shadow-lg);
 }
 
 .stat-card {
@@ -1902,7 +1994,7 @@ body {
 
 .stat-card:hover {
   transform: translateY(-3px);
-  border-color: rgba(227, 181, 89, 0.3);
+  border-color: rgba(20, 70, 143, 0.22);
   box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35);
 }
 
@@ -1938,7 +2030,7 @@ body {
 
 .btn-primary:hover:not(:disabled) {
   transform: translateY(-2px);
-  box-shadow: 0 14px 34px rgba(227, 181, 89, 0.3);
+  box-shadow: 0 14px 34px rgba(20, 70, 143, 0.22);
 }
 
 .btn-primary:hover:not(:disabled)::before {
@@ -1956,9 +2048,8 @@ body {
 }
 
 .navbar.navbar-scrolled {
-  background: rgba(6, 10, 20, 0.92);
-  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35);
-  border-bottom-color: rgba(214, 196, 168, 0.18);
+  box-shadow: var(--shadow-md);
+  border-bottom-color: var(--border-strong);
 }
 
 .brand-mark {
@@ -1967,7 +2058,7 @@ body {
 
 .brand:hover .brand-mark {
   border-color: var(--accent);
-  box-shadow: 0 0 0 3px rgba(227, 181, 89, 0.12);
+  box-shadow: 0 0 0 3px rgba(20, 70, 143, 0.1);
 }
 
 /* ---------------- Podium: the one place to spend extra polish ---------------- */
@@ -2046,8 +2137,8 @@ body {
 }
 
 .hero-preview-card:hover {
-  border-color: rgba(227, 181, 89, 0.25);
-  box-shadow: var(--shadow-lg), 0 0 40px rgba(227, 181, 89, 0.08);
+  border-color: rgba(20, 70, 143, 0.2);
+  box-shadow: var(--shadow-lg), 0 0 40px rgba(20, 70, 143, 0.06);
 }
 
 .sync-icon-pulse {
@@ -2153,6 +2244,10 @@ body {
   }
   .profile-fields .field.full {
     grid-column: span 1;
+  }
+  .footer-grid {
+    grid-template-columns: 1fr;
+    gap: 28px;
   }
 }
 

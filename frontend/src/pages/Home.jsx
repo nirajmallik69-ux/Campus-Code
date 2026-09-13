@@ -97,22 +97,20 @@ function LiveNumbers() {
   }, []);
 
   return (
-    <Reveal>
-      <div className="numbers-strip numbers-strip-2">
-        <div className="numbers-strip-item">
-          <div className="numbers-strip-value">
-            <AnimatedNumber value={totalStudents ?? 0} />
-          </div>
-          <div className="numbers-strip-label">Students Ranked</div>
+    <div className="numbers-strip numbers-strip-2">
+      <div className="numbers-strip-item">
+        <div className="numbers-strip-value" style={{ color: "#ffffff" }}>
+          <AnimatedNumber value={totalStudents ?? 0} />
         </div>
-        <div className="numbers-strip-item">
-          <div className="numbers-strip-value">
-            <AnimatedNumber value={topScore ?? 0} />
-          </div>
-          <div className="numbers-strip-label">Top Score This Term</div>
-        </div>
+        <div className="numbers-strip-label" style={{ color: "rgba(255,255,255,0.85)" }}>Students Ranked</div>
       </div>
-    </Reveal>
+      <div className="numbers-strip-item">
+        <div className="numbers-strip-value" style={{ color: "#ffffff" }}>
+          <AnimatedNumber value={topScore ?? 0} />
+        </div>
+        <div className="numbers-strip-label" style={{ color: "rgba(255,255,255,0.85)" }}>Top Score This Term</div>
+      </div>
+    </div>
   );
 }
 
@@ -207,11 +205,25 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="container" style={{ padding: "20px 0 80px" }}>
-        <LiveNumbers />
-      </section>
+      <div className="container">
+        <div className="diagonal-divider" />
+      </div>
 
-      <section className="container" style={{ paddingBottom: 80 }}>
+      <div className="diagonal-band">
+        <div className="container">
+          <div className="flag-heading">
+            <h2>
+              <strong>Campus</strong> Numbers
+            </h2>
+          </div>
+          <p style={{ marginBottom: 32 }}>
+            A live snapshot of where the whole campus stands right now.
+          </p>
+          <LiveNumbers />
+        </div>
+      </div>
+
+      <section className="container" style={{ paddingTop: 64, paddingBottom: 64 }}>
         <Reveal>
           <div className="contrast-section">
             <div className="contrast-panel is-problem">
@@ -235,6 +247,14 @@ export default function Home() {
       </section>
 
       <section className="container" style={{ paddingBottom: 40 }}>
+        <Reveal>
+          <div className="flag-heading">
+            <h2>
+              <strong>How Campus</strong> Code Works
+            </h2>
+          </div>
+        </Reveal>
+
         {FEATURES.map((feature, i) => (
           <Reveal key={feature.index} as="div">
             <div className={`feature-row ${i % 2 === 1 ? "reverse" : ""}`}>
@@ -251,10 +271,11 @@ export default function Home() {
 
       <section className="container" id="leaderboard" style={{ paddingTop: 24, paddingBottom: 80 }}>
         <Reveal>
-          <div className="page-header flex-between" style={{ flexWrap: "wrap", gap: 16 }}>
-            <div>
-              <span className="eyebrow">Campus leaderboard</span>
-              <h1>Where every student stands</h1>
+          <div className="flex-between" style={{ flexWrap: "wrap", gap: 16, marginBottom: 8 }}>
+            <div className="flag-heading">
+              <h2>
+                <strong>Campus</strong> Leaderboard
+              </h2>
             </div>
 
             <div className="year-tabs" role="tablist" aria-label="Filter leaderboard by year">
