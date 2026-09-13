@@ -7,13 +7,13 @@ import Avatar from "../components/Avatar";
 // they need to change.
 // ------------------------------------------------------------
 const DEVELOPER = {
-  name: "Your Name",
+  name: "Niraj Mallik",
   role: "Full-stack Developer",
   bio: "Built Campus Code end-to-end — backend, frontend, and the leaderboard logic in between.",
   photo: null, // e.g. "/developer.jpg" — falls back to initials if left null
-  linkedin: "https://linkedin.com/in/your-username",
+  linkedin: "https://linkedin.com/in/nirajmallik",
   github: "", // optional — leave blank to hide
-  website: "" // optional — leave blank to hide
+  website: "wa.me/+919337237089" // optional — leave blank to hide
 };
 
 export default function About() {
