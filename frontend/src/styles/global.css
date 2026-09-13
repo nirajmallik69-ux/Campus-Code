@@ -612,15 +612,10 @@ img {
 
 /* ---------------- Top announcement bar ---------------- */
 
-.top-bar {
-  background: var(--accent-strong);
-  color: #ffffff;
-  text-align: center;
-  font-size: 13px;
-  font-weight: 600;
-  padding: 9px 16px;
-  letter-spacing: 0.01em;
-}
+/* Note: an earlier version of this navbar had a separate top
+   announcement bar above it - removed in favor of a "Powered by
+   SWITCH" subtext directly under the wordmark instead, so the
+   navbar itself stays a single, simpler bar. */
 
 /* ---------------- Navbar ---------------- */
 
@@ -654,6 +649,22 @@ img {
   font-size: 19px;
   letter-spacing: -0.01em;
   color: var(--text-primary);
+}
+
+.brand-text {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.15;
+}
+
+.brand-subtext {
+  font-family: var(--font-body);
+  font-size: 10.5px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+  margin-top: 2px;
 }
 
 .brand-mark {
@@ -773,7 +784,6 @@ img {
   border-radius: var(--radius-lg);
   padding: 22px;
   position: relative;
-  overflow: hidden;
 }
 
 /* ---------------- Editorial leaderboard preview (hero) ----------------
