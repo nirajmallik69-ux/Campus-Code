@@ -31,23 +31,24 @@ export default function Navbar() {
   const closeMenu = () => setOpen(false);
 
   return (
-    <>
-      <div className="top-bar">Official coding leaderboard for Silicon University · Powered by SWITCH</div>
-      <header className={`navbar ${scrolled ? "navbar-scrolled" : ""}`}>
-        <div className="navbar-inner">
-          <NavLink to="/" className="brand" onClick={closeMenu}>
-            <span className="brand-mark" aria-hidden="true">
-              C
-            </span>
+    <header className={`navbar ${scrolled ? "navbar-scrolled" : ""}`}>
+      <div className="navbar-inner">
+        <NavLink to="/" className="brand" onClick={closeMenu}>
+          <span className="brand-mark" aria-hidden="true">
+            C
+          </span>
+          <span className="brand-text">
             Campus Code
-          </NavLink>
+            <span className="brand-subtext">Powered by SWITCH</span>
+          </span>
+        </NavLink>
 
-          <nav className="nav-links">
-            {publicLinks.map((link) => (
-              <NavLink
-                key={link.to}
-                to={link.to}
-                end={link.end}
+        <nav className="nav-links">
+          {publicLinks.map((link) => (
+            <NavLink
+              key={link.to}
+              to={link.to}
+              end={link.end}
                 className={({ isActive }) => `nav-link ${isActive ? "active" : ""}`}
               >
                 {link.label}
@@ -122,6 +123,5 @@ export default function Navbar() {
           </div>
         )}
       </header>
-    </>
   );
 }
