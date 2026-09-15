@@ -98,15 +98,6 @@ export default function NotFound() {
           }}
         />
       </div>
-
-      <svg
-        id="cb-replay"
-        onClick={runAnimation}
-        version="1.1"
-        xmlns="http://www.w3.org/2000/svg"
-        viewBox="0 0 279.9 297.3"
-        style={styles.replayIcon}
-      >
         <g>
           <path
             d="M269.4,162.6c-2.7,66.5-55.6,120.1-121.8,123.9c-77,4.4-141.3-60-136.8-136.9C14.7,81.7,71,27.8,140,27.8
