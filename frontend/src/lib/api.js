@@ -231,5 +231,10 @@ export const adminApi = {
   syncStudent: (id) => request(`/admin/sync/student/${id}`, { method: "POST" }),
 
   syncAll: (force = false) =>
-    request("/admin/sync/all", { method: "POST", body: { force } })
+    request("/admin/sync/all", { method: "POST", body: { force } }),
+
+  runYearProgression: () => request("/admin/run-year-progression", { method: "POST" }),
+
+  auditLog: ({ page = 1, limit = 20 } = {}) =>
+    request(`/admin/audit-log?page=${page}&limit=${limit}`)
 };

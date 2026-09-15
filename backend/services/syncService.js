@@ -1,18 +1,27 @@
 const LeetCodeStats = require("../models/LeetCodeStats");
 const { getLeetCodeUserData } = require("./leetcodeService");
 
-// Same window used by the student-facing /api/leetcode/stats route,
-// kept here too so admin-triggered syncs don't hammer the API for
-// students who were already refreshed recently.
-const CACHE_DURATION = 2 * 60 * 60 * 1000;
+// How long a student's synced stats are considered "fresh" before
+// they're eligible to be synced again. Configurable via env var
+// (SYNC_CACHE_MINUTES) for later tuning, but left at the original
+// 2 hours for now while the site is in testing - see the "Scaling
+// auto-sync" section in the README when it's time to revisit this
+// for production.
+//
+// Note: unlike SYNC_CHUNK_SIZE/SYNC_CONCURRENCY/SYNC_BATCH_DELAY_MS
+// below (read fresh on every scheduled run), this value is fixed
+// when the process starts - changing it on Render still takes
+// effect immediately in practice, since saving an env var there
+// triggers an automatic restart anyway.
+const CACHE_DURATION = (Number(process.env.SYNC_CACHE_MINUTES) || 120) * 60 * 1000;
 
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 /*
     Sync one student's LeetCode stats.
 
-    Pass `force: true` to ignore the 2-hour cache (used when an
-    admin explicitly re-syncs a single student).
+    Pass `force: true` to ignore the cache window above (used when
+    an admin explicitly re-syncs a single student).
 
     Returns a small result object instead of throwing, so batch
     sync can keep going after one student fails.
@@ -140,10 +149,10 @@ const syncAllStudents = async ({ force = false } = {}) => {
     synced longest ago), instead of everyone at once.
 
     This is what the automatic background schedule uses
-    (services/scheduler.js), run frequently (every few minutes) on a
-    small slice rather than rarely (every 2 hours) on the whole
-    student body. That makes this scale gracefully with the size of
-    the student body instead of hitting a hard wall:
+    (services/scheduler.js), run every 2 hours on a small slice
+    rather than rarely on the whole student body. That makes this
+    scale gracefully with the size of the student body instead of
+    hitting a hard wall:
 
       - Small college (dozens/hundreds of students): a single chunk
         covers everyone, so in practice this behaves just like
@@ -160,9 +169,9 @@ const syncAllStudents = async ({ force = false } = {}) => {
     vars on every call (not module-load time), so they can be tuned
     via Render's dashboard without a redeploy. See the "Scaling
     auto-sync" section in the README for guidance on picking these -
-    the safe defaults below assume the free, shared LeetCode API
-    instance; a self-hosted instance can usually afford higher
-    CONCURRENCY and a larger CHUNK_SIZE.
+    the defaults below are a deliberately moderate starting point,
+    not the fastest technically possible, since LeetCode doesn't
+    publish a rate limit for this endpoint to design against.
 */
 const syncStaleStudentsChunk = async () => {
     const chunkSize = Number(process.env.SYNC_CHUNK_SIZE) || 50;

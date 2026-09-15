@@ -168,6 +168,8 @@ sent in request bodies/headers — the backend does not use cookies.
 - [x] `DELETE /admin/students/:id` — permanently deletes the student, their cached stats, Cloudinary picture, and active sessions
 - [x] `POST /admin/sync/student/:id`
 - [x] `POST /admin/sync/all` — `{ force? }`
+- [x] `POST /admin/run-year-progression` — manually triggers the daily year promotion/graduation job on demand
+- [x] `GET /admin/audit-log?page=&limit=` — paginated log of admin + automated system actions
 
 ## Known backend gaps / mismatches discovered
 

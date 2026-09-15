@@ -4,8 +4,9 @@ const router = express.Router();
 
 const User = require("../models/User");
 const LeetCodeStats = require("../models/LeetCodeStats");
-const RefreshToken = require("../models/RefreshToken");
-const cloudinary = require("../config/cloudinary");
+const AuditLog = require("../models/AuditLog");
+const { permanentlyDeleteStudent } = require("../services/accountService");
+const { runYearProgression } = require("../services/yearProgressionService");
 
 // A malformed :id (wrong length/characters) would otherwise reach
 // Mongoose and throw a CastError, which the generic error handler
@@ -208,6 +209,8 @@ router.patch(
             });
         }
 
+        const changes = {};
+
         if (leetcodeUsername && leetcodeUsername !== user.leetcodeUsername) {
 
             const existingLeetcode = await User.findOne({
@@ -221,6 +224,7 @@ router.patch(
                 });
             }
 
+            changes.leetcodeUsername = { from: user.leetcodeUsername, to: leetcodeUsername };
             user.leetcodeUsername = leetcodeUsername;
 
             // Same reasoning as the old self-service flow: cached
@@ -244,11 +248,31 @@ router.patch(
             );
         }
 
-        if (name !== undefined) user.name = name;
-        if (year !== undefined) user.year = year;
-        if (whatsappNumber !== undefined) user.whatsappNumber = whatsappNumber;
+        if (name !== undefined && name !== user.name) {
+            changes.name = { from: user.name, to: name };
+            user.name = name;
+        }
+        if (year !== undefined && year !== user.year) {
+            changes.year = { from: user.year, to: year };
+            user.year = year;
+            user.yearUpdatedAt = new Date();
+        }
+        if (whatsappNumber !== undefined && whatsappNumber !== user.whatsappNumber) {
+            changes.whatsappNumber = { from: user.whatsappNumber, to: whatsappNumber };
+            user.whatsappNumber = whatsappNumber;
+        }
 
         await user.save();
+
+        await AuditLog.create({
+            actorType: "admin",
+            actorId: req.user.userId,
+            actorName: req.user.name || req.user.email,
+            action: "edit_student",
+            targetType: "User",
+            targetId: user._id,
+            details: { sicId: user.sicId, changes }
+        });
 
         return res.json({
             message: "Student updated successfully.",
@@ -262,7 +286,11 @@ router.patch(
 // DELETE /api/admin/students/:id
 // Permanently removes a student account: the user document,
 // their cached LeetCode stats, their active sessions, and
-// their Cloudinary profile picture.
+// their Cloudinary profile picture. This is the manual,
+// explicit, irreversible action - the automatic year-based
+// cleanup (services/yearProgressionService.js) does the same
+// permanent removal for graduating 4th-years, one year after
+// they became 4th-years.
 // ======================================================
 router.delete(
     "/students/:id",
@@ -283,15 +311,17 @@ router.delete(
             });
         }
 
-        if (user.profilePicturePublicId) {
-            await cloudinary.uploader.destroy(user.profilePicturePublicId);
-        }
+        await permanentlyDeleteStudent(user);
 
-        await Promise.all([
-            LeetCodeStats.deleteOne({ userId: user._id }),
-            RefreshToken.deleteMany({ userId: user._id }),
-            User.deleteOne({ _id: user._id })
-        ]);
+        await AuditLog.create({
+            actorType: "admin",
+            actorId: req.user.userId,
+            actorName: req.user.name || req.user.email,
+            action: "delete_student",
+            targetType: "User",
+            targetId: user._id,
+            details: { name: user.name, sicId: user.sicId, email: user.email }
+        });
 
         return res.json({
             message: "Student account deleted successfully."
@@ -331,7 +361,7 @@ router.post(
 
 // ======================================================
 // POST /api/admin/sync/all
-// Batch sync every student. Respects the 6-hour cache
+// Batch sync every student. Respects the 2-hour cache
 // unless { "force": true } is sent in the body.
 // ======================================================
 router.post(
@@ -342,10 +372,81 @@ router.post(
 
         const { summary, failures } = await syncAllStudents({ force });
 
+        await AuditLog.create({
+            actorType: "admin",
+            actorId: req.user.userId,
+            actorName: req.user.name || req.user.email,
+            action: "sync_all",
+            details: { force, ...summary }
+        });
+
         return res.json({
             message: "Sync run completed.",
             summary,
             failures
+        });
+    })
+);
+
+
+// ======================================================
+// POST /api/admin/run-year-progression
+// Manually triggers the yearly promotion/graduation job on
+// demand - the same logic that runs automatically once a day.
+// Exists mainly for testing (see YEAR_PROGRESSION_DAYS in
+// services/yearProgressionService.js) and for demonstrating the
+// feature without waiting for the scheduled run.
+// ======================================================
+router.post(
+    "/run-year-progression",
+    asyncHandler(async (req, res) => {
+
+        const { promoted, removed } = await runYearProgression();
+
+        await AuditLog.create({
+            actorType: "admin",
+            actorId: req.user.userId,
+            actorName: req.user.name || req.user.email,
+            action: "manual_year_progression_trigger",
+            details: { promoted, removed }
+        });
+
+        return res.json({
+            message: "Year progression run completed.",
+            promoted,
+            removed
+        });
+    })
+);
+
+
+// ======================================================
+// GET /api/admin/audit-log
+// Recent admin and automated-system actions (edits, deletes,
+// bulk syncs, yearly promotions/graduations), newest first.
+// Read-only - entries are never edited or removed via the API.
+// ======================================================
+router.get(
+    "/audit-log",
+    asyncHandler(async (req, res) => {
+
+        const page = Math.max(1, Number(req.query.page) || 1);
+        const limit = Math.min(100, Math.max(1, Number(req.query.limit) || 50));
+
+        const [entries, total] = await Promise.all([
+            AuditLog.find({})
+                .sort({ createdAt: -1 })
+                .skip((page - 1) * limit)
+                .limit(limit),
+            AuditLog.countDocuments({})
+        ]);
+
+        return res.json({
+            page,
+            limit,
+            total,
+            totalPages: Math.ceil(total / limit),
+            entries
         });
     })
 );

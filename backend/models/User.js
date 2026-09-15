@@ -33,6 +33,19 @@ const userSchema = new mongoose.Schema(
             max: 4
         },
 
+        // The last time `year` was set - either at onboarding or by
+        // any subsequent manual/admin/automatic change. The yearly
+        // auto-progression job (services/yearProgressionService.js)
+        // uses this to know when a full year has passed since a
+        // student's year was last touched, rather than counting from
+        // account creation - so a manual correction (e.g. an admin
+        // fixing a wrong year) restarts the one-year countdown from
+        // that correction, not from whenever the account was made.
+        yearUpdatedAt: {
+            type: Date,
+            default: null
+        },
+
         whatsappNumber: {
             type: String,
             required: false,

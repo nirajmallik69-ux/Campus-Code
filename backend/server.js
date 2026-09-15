@@ -1,6 +1,7 @@
 require("dotenv").config();
 
 const express = require("express");
+const mongoose = require("mongoose");
 const helmet = require("helmet");
 const cors = require("cors");
 const rateLimit = require("express-rate-limit");
@@ -12,7 +13,33 @@ const errorHandler = require("./middleware/errorHandler");
 const leaderboardRoutes = require("./routes/leaderboardRoutes");
 const studentRoutes = require("./routes/studentRoutes");
 const adminRoutes = require("./routes/adminRoutes");
-const startAutoSyncSchedule = require("./services/scheduler");
+const startSchedules = require("./services/scheduler");
+
+// Fail fast, with a clear message, if a required env var is missing -
+// rather than booting "successfully" and then failing confusingly
+// later (e.g. a mysterious auth error because JWT_SECRET is unset,
+// minutes or hours after a deploy actually happened). Checked before
+// anything else runs.
+const REQUIRED_ENV_VARS = [
+    "MONGO_URI",
+    "JWT_SECRET",
+    "EMAIL_USER",
+    "BREVO_API_KEY",
+    "CLOUDINARY_CLOUD_NAME",
+    "CLOUDINARY_API_KEY",
+    "CLOUDINARY_API_SECRET"
+];
+
+const missingEnvVars = REQUIRED_ENV_VARS.filter((key) => !process.env[key]);
+
+if (missingEnvVars.length > 0) {
+    console.error(
+        `Missing required environment variable(s): ${missingEnvVars.join(", ")}. ` +
+        "Check your .env file (locally) or your host's Environment settings (in production), " +
+        "then restart. See backend/.env.example for what each one is for."
+    );
+    process.exit(1);
+}
 
 const app = express();
 
@@ -78,6 +105,21 @@ app.get("/", (req, res) => {
     res.send("Campus Code api is running.");
 });
 
+// Real health check for uptime monitors / load balancers / orchestration -
+// reports the actual database connection state rather than just "the
+// process is alive," since a process can be running with a dead DB
+// connection (e.g. right after Atlas has a blip) and still answer "/".
+app.get("/health", (req, res) => {
+    const dbState = mongoose.connection.readyState; // 0=disconnected,1=connected,2=connecting,3=disconnecting
+    const dbConnected = dbState === 1;
+
+    res.status(dbConnected ? 200 : 503).json({
+        status: dbConnected ? "ok" : "degraded",
+        db: ["disconnected", "connected", "connecting", "disconnecting"][dbState] || "unknown",
+        uptimeSeconds: Math.round(process.uptime())
+    });
+});
+
 // Error handling middleware
 app.use(errorHandler);
 
@@ -88,7 +130,7 @@ const startServer = async () => {
     app.listen(PORT, () => {
         console.log(`Server Is Running on PORT ${PORT}`);
     });
-    startAutoSyncSchedule();
+    startSchedules();
 };
 
 startServer();

@@ -6,10 +6,7 @@ const authenticateToken = require("../middleware/authMiddleware");
 
 const LeetCodeStats = require("../models/LeetCodeStats");
 
-const {
-    getLeetCodeStats,
-    getLeetCodeProfile
-} = require("../services/leetcodeService");
+const { getLeetCodeUserData } = require("../services/leetcodeService");
 
 const { CACHE_DURATION } = require("../services/syncService");
 
@@ -42,37 +39,6 @@ router.get(
             stats.lastUpdated &&
             (now - stats.lastUpdated.getTime()) < CACHE_DURATION;
 
-
-        // If cached stats exist but LeetCode rank is missing,
-        // try to fetch ONLY the profile/rank.
-        if (cacheIsValid && stats.leetcodeRank === null) {
-
-            try {
-
-                const profile = await getLeetCodeProfile(
-                    stats.leetcodeUsername
-                );
-
-                stats.leetcodeRank = profile.ranking;
-
-                await stats.save();
-
-            } catch (error) {
-
-                console.error(
-                    "Failed to fetch LeetCode rank:",
-                    error.message
-                );
-            }
-
-            return res.json({
-                message: "LeetCode stats fetched from cache.",
-                stats
-            });
-        }
-
-
-        // Normal cache
         if (cacheIsValid) {
 
             return res.json({
@@ -85,16 +51,11 @@ router.get(
         // FETCH FRESH DATA FROM LEETCODE
         // -----------------------------------------
 
-        let leetcodeData;
-        let profile;
+        let data;
 
         try {
 
-            leetcodeData = await getLeetCodeStats(
-                stats.leetcodeUsername
-            );
-
-            profile = await getLeetCodeProfile(
+            data = await getLeetCodeUserData(
                 stats.leetcodeUsername
             );
 
@@ -115,17 +76,10 @@ router.get(
         // UPDATE DATABASE
         // -----------------------------------------
 
-        stats.totalSolved =
-            leetcodeData.solvedProblem;
-
-        stats.easySolved =
-            leetcodeData.easySolved;
-
-        stats.mediumSolved =
-            leetcodeData.mediumSolved;
-
-        stats.hardSolved =
-            leetcodeData.hardSolved;
+        stats.totalSolved = data.totalSolved;
+        stats.easySolved = data.easySolved;
+        stats.mediumSolved = data.mediumSolved;
+        stats.hardSolved = data.hardSolved;
 
         // -----------------------------------------
         // CALCULATE CAMPUS CODE LEETCODE SCORE
@@ -140,8 +94,7 @@ router.get(
         // LEETCODE GLOBAL RANK
         // -----------------------------------------
 
-        stats.leetcodeRank =
-            profile.ranking;
+        stats.leetcodeRank = data.ranking;
 
         // -----------------------------------------
         // UPDATE TIMESTAMP

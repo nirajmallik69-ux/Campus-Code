@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Users, CheckCircle2, Layers, Clock, Search, RefreshCw, Eye } from "lucide-react";
+import { Users, CheckCircle2, Layers, Clock, Search, RefreshCw, Eye, GraduationCap, History } from "lucide-react";
 import { adminApi } from "../lib/api";
 import { useToast } from "../context/ToastContext";
 import StatCard from "../components/StatCard";
@@ -12,6 +12,87 @@ import { StatCardSkeleton } from "../components/LoadingSkeleton";
 import { formatNumber, formatRelativeTime, friendlyErrorMessage } from "../lib/utils";
 
 const PAGE_SIZE = 15;
+
+const ACTION_LABELS = {
+  edit_student: "Edited a student",
+  delete_student: "Deleted a student",
+  sync_all: "Ran Sync All Students",
+  manual_year_progression_trigger: "Manually ran year progression",
+  year_promoted: "Auto-promoted to next year",
+  year_graduated_deleted: "Auto-removed (graduated)"
+};
+
+function AuditLogPanel() {
+  const [entries, setEntries] = useState(null);
+  const [error, setError] = useState(null);
+
+  const load = useCallback(async () => {
+    setError(null);
+    try {
+      const data = await adminApi.auditLog({ page: 1, limit: 10 });
+      setEntries(data.entries);
+    } catch (err) {
+      setError(friendlyErrorMessage(err, "Unable to load recent activity."));
+    }
+  }, []);
+
+  useEffect(() => {
+    load();
+  }, [load]);
+
+  return (
+    <div className="card card-padded" style={{ marginTop: 16 }}>
+      <div className="flex-between" style={{ marginBottom: 12 }}>
+        <strong style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 15 }}>
+          <History size={16} /> Recent Activity
+        </strong>
+        <button className="btn btn-ghost btn-sm" onClick={load}>
+          <RefreshCw size={13} /> Refresh
+        </button>
+      </div>
+
+      {error ? (
+        <p className="text-secondary" style={{ fontSize: 13.5 }}>{error}</p>
+      ) : entries === null ? (
+        <p className="text-secondary" style={{ fontSize: 13.5 }}>Loading...</p>
+      ) : entries.length === 0 ? (
+        <p className="text-secondary" style={{ fontSize: 13.5 }}>No activity recorded yet.</p>
+      ) : (
+        <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+          {entries.map((entry) => (
+            <div
+              key={entry._id}
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                gap: 12,
+                paddingBottom: 10,
+                borderBottom: "1px solid var(--border)",
+                fontSize: 13.5
+              }}
+            >
+              <div>
+                <span className="badge" style={{ marginRight: 8 }}>
+                  {entry.actorType === "system" ? "System" : entry.actorName || "Admin"}
+                </span>
+                {ACTION_LABELS[entry.action] || entry.action}
+                {entry.details?.sicId && (
+                  <span className="text-secondary"> · {entry.details.sicId}</span>
+                )}
+                {entry.details?.name && !entry.details?.sicId && (
+                  <span className="text-secondary"> · {entry.details.name}</span>
+                )}
+              </div>
+              <span className="text-secondary" style={{ whiteSpace: "nowrap" }}>
+                {formatRelativeTime(entry.createdAt)}
+              </span>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
 
 export default function Admin() {
   const toast = useToast();
@@ -32,6 +113,9 @@ export default function Admin() {
   const [syncingId, setSyncingId] = useState(null);
   const [syncAllOpen, setSyncAllOpen] = useState(false);
   const [syncAllRunning, setSyncAllRunning] = useState(false);
+
+  const [yearProgressionOpen, setYearProgressionOpen] = useState(false);
+  const [yearProgressionRunning, setYearProgressionRunning] = useState(false);
 
   const loadStats = useCallback(async () => {
     setStatsLoading(true);
@@ -113,6 +197,21 @@ export default function Admin() {
     }
   };
 
+  const handleRunYearProgression = async () => {
+    setYearProgressionRunning(true);
+    try {
+      const { promoted, removed } = await adminApi.runYearProgression();
+      toast.success(`Year progression complete — ${promoted} promoted, ${removed} removed (graduated)`);
+      loadList();
+      loadStats();
+    } catch (err) {
+      toast.error(friendlyErrorMessage(err, "Unable to run year progression right now."));
+    } finally {
+      setYearProgressionRunning(false);
+      setYearProgressionOpen(false);
+    }
+  };
+
   const byYearMap = Object.fromEntries((stats?.byYear || []).map((r) => [r.year, r.count]));
 
   return (
@@ -122,9 +221,14 @@ export default function Admin() {
           <span className="eyebrow">Admin</span>
           <h1>Campus Code control room</h1>
         </div>
-        <Button variant="primary" onClick={() => setSyncAllOpen(true)} disabled={syncAllRunning}>
-          <RefreshCw size={16} /> Sync All Students
-        </Button>
+        <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
+          <Button variant="secondary" onClick={() => setYearProgressionOpen(true)} disabled={yearProgressionRunning}>
+            <GraduationCap size={16} /> Run Year Progression
+          </Button>
+          <Button variant="primary" onClick={() => setSyncAllOpen(true)} disabled={syncAllRunning}>
+            <RefreshCw size={16} /> Sync All Students
+          </Button>
+        </div>
       </div>
 
       {statsError ? (
@@ -153,6 +257,8 @@ export default function Admin() {
           />
         </div>
       )}
+
+      <AuditLogPanel />
 
       <h2 className="section-title">Student Management</h2>
       <p className="section-subtitle">Search, filter, and manage every student's Campus Code account.</p>
@@ -272,6 +378,17 @@ export default function Admin() {
         loading={syncAllRunning}
         onConfirm={handleSyncAll}
         onCancel={() => !syncAllRunning && setSyncAllOpen(false)}
+      />
+
+      <ConfirmDialog
+        open={yearProgressionOpen}
+        title="Run year progression now?"
+        description="Promotes Year 1-3 students whose year hasn't been changed in over a year, and permanently deletes Year 4 students one year after they became Year 4 (graduation). This normally runs automatically once a day - this button runs it immediately instead. Deletions are permanent and cannot be undone."
+        confirmLabel="Run Now"
+        danger
+        loading={yearProgressionRunning}
+        onConfirm={handleRunYearProgression}
+        onCancel={() => !yearProgressionRunning && setYearProgressionOpen(false)}
       />
     </div>
   );

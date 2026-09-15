@@ -516,6 +516,7 @@ router.post(
         user.name = name;
         user.sicId = sicId;
         user.year = year;
+        user.yearUpdatedAt = new Date();
         user.whatsappNumber = whatsappNumber;
         user.leetcodeUsername = leetcodeUsername;
 
@@ -587,8 +588,9 @@ router.patch(
             user.name = name;
         }
 
-        if (year !== undefined) {
+        if (year !== undefined && year !== user.year) {
             user.year = year;
+            user.yearUpdatedAt = new Date();
         }
 
         if (whatsappNumber !== undefined) {
