@@ -5,7 +5,8 @@ const FOOTER_COLUMNS = [
     heading: "Campus Code",
     links: [
       { to: "/", label: "Leaderboard" },
-      { to: "/about", label: "About" }
+      { to: "/about", label: "About" },
+      { to: "/terms", label: "Terms & Conditions" }
     ]
   },
   {

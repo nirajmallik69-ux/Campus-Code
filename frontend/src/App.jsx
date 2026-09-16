@@ -12,6 +12,7 @@ import PublicStudent from "./pages/PublicStudent";
 import Admin from "./pages/Admin";
 import AdminStudentDetail from "./pages/AdminStudentDetail";
 import About from "./pages/About";
+import Terms from "./pages/Terms";
 import NotFound from "./pages/NotFound";
 
 export default function App() {
@@ -24,6 +25,7 @@ export default function App() {
           {/* Public */}
           <Route path="/" element={<Home />} />
           <Route path="/about" element={<About />} />
+          <Route path="/terms" element={<Terms />} />
           <Route path="/student/:sicId" element={<PublicStudent />} />
 
           {/* Guest-only */}

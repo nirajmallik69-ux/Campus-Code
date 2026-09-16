@@ -141,7 +141,7 @@ sent in request bodies/headers — the backend does not use cookies.
 ### Auth (`/api/auth`)
 - [x] `POST /auth/send-otp` — `{ email }`
 - [x] `POST /auth/verify-otp` — `{ email, otp }` → `{ accessToken, refreshToken, user }`
-- [x] `POST /auth/complete-profile` (auth) — `{ name, sicId, year, whatsappNumber, leetcodeUsername }`
+- [x] `POST /auth/complete-profile` (auth) — `{ name, sicId, year, whatsappNumber, leetcodeUsername, termsAccepted: true }` — `termsAccepted` must be exactly `true` or the request is rejected; recorded server-side as a timestamp (`termsAcceptedAt`), not just a boolean
 - [x] `PATCH /auth/update-profile` (auth) — `{ name?, year?, whatsappNumber? }`. `leetcodeUsername` is intentionally not accepted here anymore — it's locked once set; only `PATCH /admin/students/:id` can change it.
 - [x] `POST /auth/refresh` — `{ refreshToken }` → `{ accessToken }`
 - [x] `POST /auth/logout` — `{ refreshToken }`

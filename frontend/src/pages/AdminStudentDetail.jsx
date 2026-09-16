@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { ArrowLeft, RefreshCw, Trophy, Mail, Phone, Code2, Pencil, Trash2, X, Save } from "lucide-react";
+import { ArrowLeft, RefreshCw, Trophy, Mail, Phone, Code2, Pencil, Trash2, X, Save, ShieldCheck } from "lucide-react";
 import { adminApi } from "../lib/api";
 import { useToast } from "../context/ToastContext";
 import Avatar from "../components/Avatar";
@@ -229,6 +229,19 @@ export default function AdminStudentDetail() {
                 <Trophy size={13} style={{ marginRight: 6 }} /> Last Synced
               </span>
               <span>{formatRelativeTime(stats?.lastUpdated)}</span>
+            </div>
+            <div className="summary-row">
+              <span>
+                <ShieldCheck size={13} style={{ marginRight: 6 }} /> Terms Accepted
+              </span>
+              <span>
+                {user.termsAcceptedAt
+                  ? new Date(user.termsAcceptedAt).toLocaleString("en-US", {
+                      dateStyle: "medium",
+                      timeStyle: "short"
+                    })
+                  : "Not recorded"}
+              </span>
             </div>
           </>
         )}

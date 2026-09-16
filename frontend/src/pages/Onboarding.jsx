@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { Check, ChevronRight, ChevronLeft } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import { useToast } from "../context/ToastContext";
@@ -19,6 +19,8 @@ export default function Onboarding() {
   const [submitting, setSubmitting] = useState(false);
   const [errors, setErrors] = useState({});
   const [apiError, setApiError] = useState("");
+  const [termsAccepted, setTermsAccepted] = useState(false);
+  const [termsError, setTermsError] = useState("");
 
   const [form, setForm] = useState({
     name: "",
@@ -57,6 +59,11 @@ export default function Onboarding() {
   const goBack = () => setStep((s) => Math.max(s - 1, 0));
 
   const handleSubmit = async () => {
+    if (!termsAccepted) {
+      setTermsError("You must agree to the Terms & Conditions to continue.");
+      return;
+    }
+    setTermsError("");
     setSubmitting(true);
     setApiError("");
     try {
@@ -65,7 +72,8 @@ export default function Onboarding() {
         sicId: form.sicId.trim(),
         year: Number(form.year),
         whatsappNumber: form.whatsappNumber.trim(),
-        leetcodeUsername: form.leetcodeUsername.trim()
+        leetcodeUsername: form.leetcodeUsername.trim(),
+        termsAccepted: true
       });
       toast.success("Profile created successfully");
       navigate("/dashboard", { replace: true });
@@ -168,6 +176,37 @@ export default function Onboarding() {
                 <span>LeetCode username</span>
                 <span>{form.leetcodeUsername}</span>
               </div>
+
+              <label
+                style={{
+                  display: "flex",
+                  alignItems: "flex-start",
+                  gap: 10,
+                  marginTop: 20,
+                  fontSize: 13.5,
+                  color: "var(--text-secondary)",
+                  cursor: "pointer"
+                }}
+              >
+                <input
+                  type="checkbox"
+                  checked={termsAccepted}
+                  onChange={(e) => {
+                    setTermsAccepted(e.target.checked);
+                    if (e.target.checked) setTermsError("");
+                  }}
+                  style={{ marginTop: 2 }}
+                />
+                <span>
+                  I agree to the{" "}
+                  <Link to="/terms" target="_blank" rel="noreferrer" style={{ color: "var(--accent)", fontWeight: 600 }}>
+                    Terms & Conditions
+                  </Link>
+                  , including the public visibility of my leaderboard data and the automatic
+                  removal of my account after graduation.
+                </span>
+              </label>
+              {termsError && <span className="field-error">{termsError}</span>}
             </div>
           )}
 
