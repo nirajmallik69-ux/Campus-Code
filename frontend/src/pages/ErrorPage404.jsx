@@ -154,7 +154,7 @@ function BearLogo({ className = "" }) {
 }
 
 export default function ErrorPage404({
-  homeHref = "/",
+  homeHref = "https://campus-code-switch.vercel.app",
   homeLabel = "Return to happiness",
 }) {
   useEffect(() => {
@@ -184,7 +184,7 @@ export default function ErrorPage404({
       <style>{`
         .nf404 {
           --light: 5;
-          background: hsl(0, 0%, calc(var(--light) * 1%));
+          background: #ffffff;
           font-family: 'Roboto Mono', monospace;
           min-height: 100vh;
           width: 100%;
@@ -199,7 +199,7 @@ export default function ErrorPage404({
         .nf404 * { box-sizing: border-box; }
         .nf404 h1 { margin: 0; }
         .nf404 a {
-          color: hsl(0, 0%, calc((100 - var(--light)) * 1%));
+          color: #2563eb;
           font-weight: bold;
         }
 
@@ -239,7 +239,7 @@ export default function ErrorPage404({
 
         /* Glitch text reveal */
         .nf404 .glitchy-text {
-          color: hsl(0, 0%, calc((100 - var(--light, 95)) * 1%));
+          color: #2563eb;
           display: inline-block;
           position: relative;
         }
@@ -272,7 +272,7 @@ export default function ErrorPage404({
           animation-timing-function: steps(1);
           animation-iteration-count: var(--count);
           animation-name: nf404-glitch-switch;
-          color: hsl(0, 0%, calc((100 - var(--light, 95)) * 1%));
+          color: #2563eb;
           transition: color 0.2s ease 0s;
           position: absolute;
           content: var(--txt);
