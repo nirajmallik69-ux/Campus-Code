@@ -601,7 +601,7 @@ img {
   object-fit: cover;
   flex-shrink: 0;
   background: var(--accent-strong);
-  display: flex;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
   color: #ffffff;
