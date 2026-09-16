@@ -5,39 +5,35 @@ import AnimatedNumber from "./AnimatedNumber";
 import Reveal from "./Reveal";
 import { formatNumber } from "../lib/utils";
 
-// Stacked (single-column) layout: cards read top-to-bottom in rank
-// order, so the reveal stagger now simply follows rank order too.
+// Stagger ascending by rank (1 -> 2 -> 3), which reads naturally
+// both for the desktop 3-column podium and the mobile single-column
+// stack (top to bottom).
 const REVEAL_DELAY_BY_RANK = { 1: 0, 2: 120, 3: 240 };
 
 const RANK_ACCENT = { 1: "var(--gold)", 2: "var(--silver)", 3: "var(--bronze)" };
 
-// Simple inline SVGs so we're not dependent on an icon set having
-// a butterfly. Each flies along its own CSS path (see stylesheet),
-// so only shape + wing-flap animation live here.
-function Butterfly({ className, color = "var(--gold)" }) {
+// ---------- Decorative overlay (butterflies, planes, watermark) ----------
+// Lives OUTSIDE .podium as a sibling, absolutely positioned, so it can
+// never be picked up as a grid item and never affects layout.
+
+function Butterfly({ className, color }) {
   return (
-    <svg className={`deco-butterfly ${className}`} viewBox="0 0 40 32" width="28" height="24">
+    <svg className={`deco-butterfly ${className}`} viewBox="0 0 40 32" width="26" height="21">
       <g className="wing-flap">
         <path d="M18 16 C10 2, -2 4, 2 14 C4 20, 12 20, 18 16 Z" fill={color} opacity="0.85" />
         <path d="M22 16 C30 2, 42 4, 38 14 C36 20, 28 20, 22 16 Z" fill={color} opacity="0.85" />
-        <path d="M18 16 C12 24, 4 26, 6 30 C10 30, 16 24, 18 16 Z" fill={color} opacity="0.6" />
-        <path d="M22 16 C28 24, 36 26, 34 30 C30 30, 24 24, 22 16 Z" fill={color} opacity="0.6" />
+        <path d="M18 16 C12 24, 4 26, 6 30 C10 30, 16 24, 18 16 Z" fill={color} opacity="0.55" />
+        <path d="M22 16 C28 24, 36 26, 34 30 C30 30, 24 24, 22 16 Z" fill={color} opacity="0.55" />
       </g>
-      <line x1="19" y1="12" x2="21" y2="20" stroke={color} strokeWidth="1.5" />
+      <line x1="19" y1="12" x2="21" y2="20" stroke={color} strokeWidth="1.4" />
     </svg>
   );
 }
 
-function PaperPlane({ className, color = "var(--silver)" }) {
+function PaperPlane({ className, color }) {
   return (
-    <svg className={`deco-plane ${className}`} viewBox="0 0 24 24" width="22" height="22">
-      <path
-        d="M2 12 L21 3 L14 21 L11 13 L2 12 Z"
-        fill={color}
-        stroke={color}
-        strokeLinejoin="round"
-        opacity="0.9"
-      />
+    <svg className={`deco-plane ${className}`} viewBox="0 0 24 24" width="18" height="18">
+      <path d="M2 12 L21 3 L14 21 L11 13 L2 12 Z" fill={color} stroke={color} strokeLinejoin="round" opacity="0.85" />
     </svg>
   );
 }
@@ -46,14 +42,11 @@ function PodiumDecorations() {
   return (
     <div className="podium-decorations" aria-hidden="true">
       <span className="podium-watermark">SWITCH</span>
-
       <Butterfly className="fly-path-1" color="var(--gold)" />
       <Butterfly className="fly-path-2" color="var(--bronze)" />
       <Butterfly className="fly-path-3" color="var(--silver)" />
-
       <PaperPlane className="fly-path-4" color="var(--silver)" />
       <PaperPlane className="fly-path-5" color="var(--gold)" />
-
       <span className="sparkle sparkle-1" />
       <span className="sparkle sparkle-2" />
       <span className="sparkle sparkle-3" />
@@ -61,11 +54,13 @@ function PodiumDecorations() {
   );
 }
 
+// ---------- Card ----------
+
 function PodiumCard({ student, rank }) {
   const navigate = useNavigate();
 
   return (
-    <Reveal delay={REVEAL_DELAY_BY_RANK[rank]} className={`podium-row rank-${rank}`}>
+    <Reveal delay={REVEAL_DELAY_BY_RANK[rank]} className={`podium-card rank-${rank}`}>
       <div
         role="button"
         tabIndex={0}
@@ -73,11 +68,18 @@ function PodiumCard({ student, rank }) {
         onClick={() => navigate(`/student/${student.sicId}`)}
         onKeyDown={(e) => e.key === "Enter" && navigate(`/student/${student.sicId}`)}
       >
+        {rank === 1 && (
+          <div className="podium-crown">
+            <Crown size={26} color="var(--gold)" fill="var(--gold)" />
+          </div>
+        )}
+
+        {/* Only visible in the mobile stacked layout (see CSS) */}
         <div className="podium-rank-badge">
           {rank === 1 ? (
-            <Crown size={20} color={RANK_ACCENT[1]} fill={RANK_ACCENT[1]} />
+            <Crown size={15} color={RANK_ACCENT[1]} fill={RANK_ACCENT[1]} />
           ) : (
-            <Medal size={18} color={RANK_ACCENT[rank]} fill={RANK_ACCENT[rank]} />
+            <Medal size={14} color={RANK_ACCENT[rank]} fill={RANK_ACCENT[rank]} />
           )}
           <span>#{rank}</span>
         </div>
@@ -108,11 +110,13 @@ export default function Podium({ topThree }) {
   if (!topThree || topThree.length < 3) return null;
 
   return (
-    <div className="podium podium-stacked">
+    <div className="podium-wrap">
       <PodiumDecorations />
-      <PodiumCard student={topThree[0]} rank={1} />
-      <PodiumCard student={topThree[1]} rank={2} />
-      <PodiumCard student={topThree[2]} rank={3} />
+      <div className="podium">
+        <PodiumCard student={topThree[0]} rank={1} />
+        <PodiumCard student={topThree[1]} rank={2} />
+        <PodiumCard student={topThree[2]} rank={3} />
+      </div>
     </div>
   );
 }
