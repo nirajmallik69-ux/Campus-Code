@@ -39,7 +39,6 @@ export default function Navbar() {
           </span>
           <span className="brand-text">
             Campus Code
-            <span className="brand-subtext">Powered by SWITCH</span>
           </span>
         </NavLink>
 
