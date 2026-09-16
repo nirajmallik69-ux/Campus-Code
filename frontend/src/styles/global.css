@@ -2310,3 +2310,223 @@ img {
     flex-direction: column-reverse;
   }
 }
+
+/* ---------------- Podium: overlay decorations + mobile stack ----------------
+   Appended block. Deliberately placed AFTER the existing podium rules
+   and media queries above so it wins ties in the cascade without
+   needing !important anywhere. */
+
+.podium-wrap {
+  position: relative;
+  overflow: hidden; /* clip flight paths so they can't cause horizontal scroll */
+}
+
+.podium {
+  position: relative;
+  z-index: 1; /* keep cards above the decoration layer */
+}
+
+/* Rank badge used only in the mobile single-column layout; hidden on
+   desktop where the existing crown + card colors already read rank. */
+.podium-rank-badge {
+  display: none;
+}
+
+/* ---------------- Decoration layer ---------------- */
+
+.podium-decorations {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.podium-watermark {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-family: var(--font-display);
+  font-size: clamp(32px, 8vw, 72px);
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  color: var(--text-primary);
+  opacity: 0;
+  white-space: nowrap;
+  animation: watermark-fade 8s ease-in-out infinite;
+}
+
+@keyframes watermark-fade {
+  0%, 100% { opacity: 0; }
+  50% { opacity: 0.05; }
+}
+
+.deco-butterfly,
+.deco-plane {
+  position: absolute;
+  will-change: transform;
+}
+
+.wing-flap {
+  transform-origin: 20px 16px;
+  animation: wing-flap 0.35s ease-in-out infinite alternate;
+}
+
+@keyframes wing-flap {
+  from { transform: scaleX(1); }
+  to   { transform: scaleX(0.55); }
+}
+
+.fly-path-1 { top: 10%; left: -30px; animation: fly-1 9s ease-in-out infinite; }
+.fly-path-2 { top: 55%; left: -30px; animation: fly-2 11s ease-in-out infinite 2.5s; }
+.fly-path-3 { top: 28%; right: -30px; animation: fly-3 10s ease-in-out infinite 1.2s; }
+.fly-path-4 { top: 6%; right: -30px; animation: fly-4 8s ease-in-out infinite 3.5s; }
+.fly-path-5 { top: 72%; left: -30px; animation: fly-5 9.5s ease-in-out infinite 5s; }
+
+@keyframes fly-1 {
+  0%   { transform: translate(0, 0) rotate(4deg); opacity: 0; }
+  12%  { opacity: 0.9; }
+  50%  { transform: translate(220px, -22px) rotate(-2deg); }
+  88%  { opacity: 0.9; }
+  100% { transform: translate(440px, 10px) rotate(4deg); opacity: 0; }
+}
+
+@keyframes fly-2 {
+  0%   { transform: translate(0, 0) rotate(-4deg); opacity: 0; }
+  12%  { opacity: 0.9; }
+  50%  { transform: translate(200px, 18px) rotate(6deg); }
+  88%  { opacity: 0.9; }
+  100% { transform: translate(400px, -14px) rotate(-4deg); opacity: 0; }
+}
+
+@keyframes fly-3 {
+  0%   { transform: translate(0, 0) rotate(180deg); opacity: 0; }
+  12%  { opacity: 0.9; }
+  50%  { transform: translate(-200px, 16px) rotate(186deg); }
+  88%  { opacity: 0.9; }
+  100% { transform: translate(-400px, -12px) rotate(174deg); opacity: 0; }
+}
+
+@keyframes fly-4 {
+  0%   { transform: translate(0, 0) rotate(180deg); opacity: 0; }
+  15%  { opacity: 0.85; }
+  50%  { transform: translate(-180px, 26px) rotate(192deg); }
+  85%  { opacity: 0.85; }
+  100% { transform: translate(-360px, -8px) rotate(172deg); opacity: 0; }
+}
+
+@keyframes fly-5 {
+  0%   { transform: translate(0, 0) rotate(0deg); opacity: 0; }
+  15%  { opacity: 0.85; }
+  50%  { transform: translate(180px, -20px) rotate(-10deg); }
+  85%  { opacity: 0.85; }
+  100% { transform: translate(360px, 10px) rotate(8deg); opacity: 0; }
+}
+
+.sparkle {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--gold);
+  box-shadow: 0 0 6px 2px rgba(212, 160, 23, 0.45);
+  animation: sparkle-twinkle 2.4s ease-in-out infinite;
+}
+.sparkle-1 { top: 14%; left: 18%; }
+.sparkle-2 { top: 42%; left: 82%; animation-delay: 0.8s; }
+.sparkle-3 { top: 80%; left: 38%; animation-delay: 1.6s; }
+
+@keyframes sparkle-twinkle {
+  0%, 100% { opacity: 0; transform: scale(0.5); }
+  50%      { opacity: 1; transform: scale(1.3); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .deco-butterfly, .deco-plane, .podium-watermark, .sparkle, .wing-flap {
+    animation: none !important;
+  }
+}
+
+/* ---------------- Mobile: single-column stacked podium ----------------
+   Reuses the existing .podium-card rules for color/border/background;
+   only the arrangement changes below 640px. */
+
+@media (max-width: 640px) {
+  .podium {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .podium-card,
+  .podium-card.rank-1 {
+    order: unset;
+  }
+  .podium-card.rank-1 { order: 1; }
+  .podium-card.rank-2 { order: 2; }
+  .podium-card.rank-3 { order: 3; }
+
+  .podium-card {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    text-align: left;
+    padding: 14px 16px;
+  }
+
+  /* The float/glow on rank 1 works well as a static card in a wide
+     grid; in a compact row it just causes layout jitter, so drop it. */
+  .podium-card.rank-1 {
+    animation: none;
+  }
+  .podium-card.rank-1::after {
+    display: none;
+  }
+
+  .podium-crown {
+    display: none;
+  }
+  .podium-rank-badge {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--text-secondary);
+    flex-shrink: 0;
+    min-width: 28px;
+  }
+
+  .podium-avatar {
+    margin: 0;
+    flex-shrink: 0;
+  }
+  .podium-card.rank-1 .avatar,
+  .podium-card.rank-2 .avatar,
+  .podium-card.rank-3 .avatar {
+    width: 48px;
+    height: 48px;
+    font-size: 15px;
+  }
+
+  .podium-info {
+    flex: 1;
+    min-width: 0;
+  }
+  .podium-name {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .podium-sic {
+    margin-bottom: 0;
+  }
+
+  .podium-stats {
+    text-align: right;
+    flex-shrink: 0;
+  }
+  .podium-points {
+    font-size: 17px;
+  }
+}
