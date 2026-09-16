@@ -11,6 +11,7 @@ import Profile from "./pages/Profile";
 import PublicStudent from "./pages/PublicStudent";
 import Admin from "./pages/Admin";
 import AdminStudentDetail from "./pages/AdminStudentDetail";
+import ErrorPage404 from "./pages/ErrorPage404";
 import About from "./pages/About";
 import Terms from "./pages/Terms";
 import NotFound from "./pages/NotFound";
