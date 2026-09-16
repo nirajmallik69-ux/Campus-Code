@@ -51,7 +51,7 @@ export default function App() {
             <Route path="/admin/students/:id" element={<AdminStudentDetail />} />
           </Route>
 
-          <Route path="*" element={<NotFound />} />
+          <Route path="*" element={<ErrorPage404 />} />
         </Routes>
       </main>
 
